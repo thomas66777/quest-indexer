@@ -146,7 +146,8 @@ export class TezosBroadcaster {
 
             // wait until confirmed in block for fitness level
             const fitness = Number(process.env.FITNESS_LEVEL || 3)
-            const block_level = (await op.confirmation(fitness, 10, (fitness + 2) * 60)) - (fitness - 1) // need to adj; see taquito/src/operations/operations.ts
+            const timeoutSecs = Number(process.env.TAQUITO_TIMEOUT || ((fitness + 2) * 60))
+            const block_level = (await op.confirmation(fitness, 10, timeoutSecs)) - (fitness - 1) // need to adj; see taquito/src/operations/operations.ts
             console.log(new Date().toISOString(), `broadcaster: ${method.toTransferParams().to} ${op.hash} confirmed at block: ${block_level}`)
             const block = await this.rpcClient.getBlock(block_level)
 
@@ -178,6 +179,15 @@ export class TezosBroadcaster {
             }
         } catch (error) {
             console.error(new Date().toISOString(), error.message)
+            this.db.prepare(`
+            update indexer_reward
+            set reward_status = :reward_status, reward_block_status = :reward_block_status, reward_block_errors = :reward_block_errors
+            where id in (${aryRewardIds.join(',')})
+            `).run({
+                reward_status: REWARD_STATUS.ERROR,
+                reward_block_status: 'taquito error',
+                reward_block_errors: error.message,
+            })
             await sendSlackMessage(`unable to transfer FA2: \`${error.message}\``)
         } finally {
             global['polling_counter']--
