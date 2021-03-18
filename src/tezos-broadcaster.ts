@@ -120,15 +120,12 @@ export class TezosBroadcaster {
                 txs.push({ amount: 1, to_: b.reward_account, token_id: b.token_id, })
             }
 
-            const methodBase = contract.methods.transfer([
+            const method = contract.methods.transfer([
                 {
                     from_: tezos_signer,
                     txs,
                 }
             ])
-
-            // need a new memory object for method to catch parallel subscribe errors
-            const method = copy(methodBase, { nonenumerable: true })
 
             // inject the transfer method
             const op = await method.send()

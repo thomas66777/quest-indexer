@@ -50,6 +50,11 @@ process.on('SIGINT', () => {
 
 // Notify for any unexpected crashes
 process.on('uncaughtException', async (err) => {
+    if (err.message == 'Confirmation polling timed out') {
+        // this is an unhandled exception in the taquito TapSubscriber
+        // do not crash program; can continue to run with this uncaughtException
+        return
+    }
     console.error(new Date().toISOString(), 'uncaughtException', err.name, err.message)
     console.error(err.stack)
 
