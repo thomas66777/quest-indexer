@@ -1,0 +1,27 @@
+[book]
+authors = ["Thomas Powers"]
+language = "en"
+multilingual = false
+src = "src"
+description = "The example book covers examples."
+title = "mdbook-test"
+
+[output.html]
+theme = "src/theme"
+default-theme = "rust"
+
+# [output.epub]
+
+[output.html.search]
+limit-results = 15
+
+[rust]
+edition = "2018"
+
+[build]
+build-dir = "dist"
+create-missing = false
+
+[preprocessor.index]
+[preprocessor.links]
+

@@ -1,0 +1,460 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Tezos Quest Indexer",
+        "description": "API endpoints for Quest Indexer"
+    },
+    "tags": [
+        {
+            "name": "Quest",
+            "description": "API for Quest Indexer"
+        }
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "check if the API is running, always returns true",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "---": {
+                                        "status": "success",
+                                        "data": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/status": {
+            "get": {
+                "summary": "gets the current status of the poller",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "---": {
+                                        "status": "success",
+                                        "data": {
+                                            "chain_id": "NetXm8tYqnMWky1",
+                                            "block_timestamp": "2021-02-05T23:48:37.000Z",
+                                            "block_level": 423886,
+                                            "block_id": "BLWR9BzVj1HX8sokYPVNdnrxZaeVZNsbcehNFhVKpsrfqahTwce"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/games": {
+            "get": {
+                "summary": "gets all the games running with some basic info",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "---": {
+                                        "status": "success",
+                                        "data": [
+                                            {
+                                                "game_id": 1,
+                                                "quest_name": "mystery puzzle",
+                                                "quest_desc": "first example Tezos Puzzle",
+                                                "tezos_contract_fa2": "KT1PS2jZVzNMW54UsnqBqwwkArXnAZ29jiTF"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_game": {
+            "get": {
+                "summary": "gets all the admins for a game_id",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "query",
+                        "description": "The game_id from `/quests` endpoint",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "1": {
+                                        "status": "success",
+                                        "data": [
+                                            {
+                                                "admin_id": 1,
+                                                "pub_key": "edpkvHtwEi3pNY5KdUcnbzDtLvxLzRoJRVKvKc7sHVxWqk2VAtES9G",
+                                                "pub_key_hash": "tz1NXuEyKGjGXAEn5gSqzgwhkEqNeN5wcaLf"
+                                            },
+                                            {
+                                                "admin_id": 2,
+                                                "pub_key": "edpktpxvy5tvL37BYPKLpo9U4xcie6CMX8xDAsTu2oebRScGc2HsTM",
+                                                "pub_key_hash": "tz1PMKwVT16GF94sUpgeYRuF9p8x6yMweDgW"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/daily_reward": {
+            "get": {
+                "summary": "gets the status of the daily reward call specifically",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "query",
+                        "description": "the game_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pkh",
+                        "in": "query",
+                        "description": "The tezos address (tz1...) of the user",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "": {
+                                        "status": "success",
+                                        "data": [
+                                            {
+                                                "id": 3,
+                                                "game_id": 3,
+                                                "quest_id": 2402671165,
+                                                "token_id": 17,
+                                                "reward": "tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst",
+                                                "time_stamp": "2021-03-13T00:06:36Z",
+                                                "block_level": 509722,
+                                                "operation_idx": 3,
+                                                "chain_id": "NetXm8tYqnMWky1",
+                                                "hash": "onrjSNBLctVXE5acwscj2HX8CawVnyDCYVW285Mb4Q7fpn4i8cM"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/quests": {
+            "get": {
+                "summary": "gets the current game state for a particualar game and user",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "query",
+                        "description": "the game_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pkh",
+                        "in": "query",
+                        "description": "The tezos address (tz1...) of the user",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "": {
+                                        "status": "success",
+                                        "data": [
+                                            {
+                                                "status": "NOT_STARTED",
+                                                "reward_status": null,
+                                                "filter_id": 8,
+                                                "game_id": 1,
+                                                "name": "contrct-to-dauth",
+                                                "description": "Send an FA2 token in a defined contract X to a Twitter (DirectAuth) user",
+                                                "reward": "operations:contents:0:source",
+                                                "criteria": {
+                                                    "operations:chain_id": "NetXm8tYqnMWky1",
+                                                    "operations:contents:kind": "transaction",
+                                                    "operations:contents:source": {
+                                                        "eval": "value.substr(0,3) == \"tz2\""
+                                                    },
+                                                    "operations:contents:destination": "<KT1...>",
+                                                    "operations:contents:parameters:entrypoint": "transfer"
+                                                },
+                                                "time_start": "2000-01-01T00:00:00.000Z",
+                                                "time_end": null,
+                                                "quest_id": null,
+                                                "token_id": null,
+                                                "reward_account": null,
+                                                "quest_completed_timestamp": null,
+                                                "block_level": null,
+                                                "operation_idx": null,
+                                                "chain_id": null,
+                                                "hash": null,
+                                                "reward_hash": null,
+                                                "reward_block_level": null,
+                                                "reward_block_timestamp": null,
+                                                "is_active": true
+                                            },
+                                            {
+                                                "status": "NOT_STARTED",
+                                                "reward_status": null,
+                                                "filter_id": 4,
+                                                "game_id": 1,
+                                                "name": "from-dirauth",
+                                                "description": "Use Kukai to send tez from a DirectAuth account to any recipient",
+                                                "reward": "operations:contents:0:source",
+                                                "criteria": {
+                                                    "operations:chain_id": "NetXm8tYqnMWky1",
+                                                    "operations:contents:kind": "transaction",
+                                                    "operations:contents:source": {
+                                                        "eval": "value.substr(0,3) == \"tz2\""
+                                                    },
+                                                    "operations:contents:amount": {
+                                                        "eval": "value >= 1000000"
+                                                    }
+                                                },
+                                                "time_start": "2000-01-01T00:00:00.000Z",
+                                                "time_end": null,
+                                                "quest_id": null,
+                                                "token_id": null,
+                                                "reward_account": null,
+                                                "quest_completed_timestamp": null,
+                                                "block_level": null,
+                                                "operation_idx": null,
+                                                "chain_id": null,
+                                                "hash": null,
+                                                "reward_hash": null,
+                                                "reward_block_level": null,
+                                                "reward_block_timestamp": null,
+                                                "is_active": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/rewards_pending/{game_id}": {
+            "get": {
+                "summary": "gets the all the pending FA2 transfers needed to be sent by an admin to the FA2 contract",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "query",
+                        "description": "the game_id to check for any pending reward",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "this overrides the tezos FA2 contract account you would to send FA2 from",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "---": {
+                                        "status": "success",
+                                        "data": {
+                                            "humanArgs": [
+                                                [
+                                                    {
+                                                        "from_": "tz1NXuEyKGjGXAEn5gSqzgwhkEqNeN5wcaLf",
+                                                        "txs": [
+                                                            {
+                                                                "to_": "tz1Myo4eJ6JaGEPkTJw3cf1R3MQEmZQmkGt4",
+                                                                "token_id": 20,
+                                                                "amount": 0
+                                                            },
+                                                            {
+                                                                "to_": "tz1PirboHQVqkYqLSWfHUHEy3AdhYUNJpvGy",
+                                                                "token_id": 13,
+                                                                "amount": 0
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            ],
+                                            "transferParamsFA2": [
+                                                {
+                                                    "to": "KT1PS2jZVzNMW54UsnqBqwwkArXnAZ29jiTF",
+                                                    "amount": 0,
+                                                    "mutez": false,
+                                                    "parameter": {
+                                                        "entrypoint": "transfer",
+                                                        "value": [
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "string": "tz1NXuEyKGjGXAEn5gSqzgwhkEqNeN5wcaLf"
+                                                                    },
+                                                                    [
+                                                                        {
+                                                                            "prim": "Pair",
+                                                                            "args": [
+                                                                                {
+                                                                                    "string": "tz1Myo4eJ6JaGEPkTJw3cf1R3MQEmZQmkGt4"
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Pair",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "int": "20"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "0"
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "prim": "Pair",
+                                                                            "args": [
+                                                                                {
+                                                                                    "string": "tz1PirboHQVqkYqLSWfHUHEy3AdhYUNJpvGy"
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Pair",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "int": "13"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "0"
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/special": {
+            "get": {
+                "summary": "gets all the special processing results",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "the type of the special processing you are looking for. EX: auction",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,604 @@
+//~ https://better-call.dev/delphinet/opg/ootNC8S2V7fma5Cc8GQEdPJrfZHSB3YHMLW1zcki5wEvEF71AUt/contents
+{
+    "protocol": "PsDELPH1Kxsxt8f9eWbxQeRxkjfbxoqM52jvs5Y5fBxWWh4ifpo",
+    "chain_id": "NetXm8tYqnMWky1",
+    "hash": "ootNC8S2V7fma5Cc8GQEdPJrfZHSB3YHMLW1zcki5wEvEF71AUt",
+    "branch": "BMTZyZqD6URLdRXphaKCidpYVAMLUuLawhG3oCF61nM9XTKujTk",
+    "contents": [
+        {
+            "kind": "transaction",
+            "source": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov",
+            "fee": "9298",
+            "counter": "708464",
+            "gas_limit": "89132",
+            "storage_limit": "227",
+            "amount": "1000000",
+            "destination": "KT1HeaymSPcrYCfA9tuzfA2RfoF764eLe6cf",
+            "parameters": {
+                "entrypoint": "buy",
+                "value": {
+                    "prim": "Pair",
+                    "args": [
+                        {
+                            // label: very-tennis
+                            "bytes": "766572792d74656e6e6973"
+                        },
+                        {
+                            "prim": "Pair",
+                            "args": [
+                                {
+                                    "int": "365"
+                                },
+                                {
+                                    "prim": "Pair",
+                                    "args": [
+                                        {
+                                            "string": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov"
+                                        },
+                                        {
+                                            "prim": "Pair",
+                                            "args": [
+                                                {
+                                                    "prim": "None"
+                                                },
+                                                {
+                                                    "prim": "Pair",
+                                                    "args": [
+                                                        [],
+                                                        {
+                                                            "int": "85950260427205"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "metadata": {
+                "balance_updates": [
+                    {
+                        "kind": "contract",
+                        "contract": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov",
+                        "change": "-9298"
+                    },
+                    {
+                        "kind": "freezer",
+                        "category": "fees",
+                        "delegate": "tz1LpmZmB1yJJBcCrBDLSAStmmugGDEghdVv",
+                        "cycle": 201,
+                        "change": "9298"
+                    }
+                ],
+                "operation_result": {
+                    "status": "applied",
+                    "storage": {
+                        "prim": "Pair",
+                        "args": [
+                            {
+                                "bytes": "01e68325ef6a34ca01df9e046b4c3d6ec624885bd500"
+                            },
+                            {
+                                "bytes": "000068a52a1d7406ff5feeae3571b147b395da14fb50"
+                            }
+                        ]
+                    },
+                    "balance_updates": [
+                        {
+                            "kind": "contract",
+                            "contract": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov",
+                            "change": "-1000000"
+                        },
+                        {
+                            "kind": "contract",
+                            "contract": "KT1HeaymSPcrYCfA9tuzfA2RfoF764eLe6cf",
+                            "change": "1000000"
+                        }
+                    ],
+                    "consumed_gas": "15570",
+                    "consumed_milligas": "15569753",
+                    "storage_size": "576"
+                },
+                "internal_operation_results": [
+                    {
+                        "kind": "transaction",
+                        "source": "KT1HeaymSPcrYCfA9tuzfA2RfoF764eLe6cf",
+                        "nonce": 0,
+                        "amount": "1000000",
+                        "destination": "KT1Vbc6Dq5nj56mgNdDcyCieYCZxEGV6fG9H",
+                        "parameters": {
+                            "entrypoint": "execute",
+                            "value": {
+                                "prim": "Pair",
+                                "args": [
+                                    {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "string": "Buy"
+                                            },
+                                            {
+                                                "bytes": "00004b0ca67d26d52d33e75a859a6332a9ffcb9d81a3"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "bytes": "0507070a0000000b766572792d74656e6e6973070700ad0507070a0000001600004b0ca67d26d52d33e75a859a6332a9ffcb9d81a307070306070702000000000085e7edabfb8a27"
+                                    }
+                                ]
+                            }
+                        },
+                        "result": {
+                            "status": "applied",
+                            "storage": {
+                                "prim": "Pair",
+                                "args": [
+                                    {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "int": "44541"
+                                            },
+                                            {
+                                                "prim": "Pair",
+                                                "args": [
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "prim": "Pair",
+                                                                        "args": [
+                                                                            {
+                                                                                "int": "44542"
+                                                                            },
+                                                                            {
+                                                                                "int": "44543"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "prim": "Pair",
+                                                                        "args": [
+                                                                            {
+                                                                                "int": "44544"
+                                                                            },
+                                                                            [
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "bid_additional_period"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "86400"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "launch_date"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "0"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "max_commitment_age"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "86400"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "min_auction_period"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "1209600"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "min_bid_increase_ratio"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "20"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "min_bid_per_day"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "2739726027"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "min_commitment_age"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "30"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "prim": "Elt",
+                                                                                    "args": [
+                                                                                        {
+                                                                                            "string": "min_duration"
+                                                                                        },
+                                                                                        {
+                                                                                            "int": "365"
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "prim": "Pair",
+                                                                        "args": [
+                                                                            {
+                                                                                "int": "44545"
+                                                                            },
+                                                                            {
+                                                                                "prim": "True"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "prim": "Pair",
+                                                                        "args": [
+                                                                            {
+                                                                                "int": "44546"
+                                                                            },
+                                                                            {
+                                                                                "bytes": "013657d32e402850265274ee021355902452ddd83e00"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "bytes": "000068a52a1d7406ff5feeae3571b147b395da14fb50"
+                                                                    },
+                                                                    {
+                                                                        "int": "44547"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "bytes": "01e68325ef6a34ca01df9e046b4c3d6ec624885bd500"
+                                                                    },
+                                                                    {
+                                                                        "bytes": "64656c706869"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    [
+                                        {
+                                            "bytes": "011957b140d6ab564bf0e4d33a66b17d22125ea15900"
+                                        },
+                                        {
+                                            "bytes": "01498a0788aecc3ce46667ced02253c1c89f0cefb800"
+                                        },
+                                        {
+                                            "bytes": "014b18808864154ccd2a9e40f2871f19e1e39f4e8400"
+                                        },
+                                        {
+                                            "bytes": "016371f5813f07cac9ce72324c44cf015454f69bdf00"
+                                        },
+                                        {
+                                            "bytes": "0187cae075ff2f1f25ad3bd3300f523711445263f100"
+                                        },
+                                        {
+                                            "bytes": "01ffe0c5fbcfeec924555c573be4a922586e4a63bd00"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "big_map_diff": [
+                                {
+                                    "action": "update",
+                                    "big_map": "44547",
+                                    "key_hash": "exprtoLiM3B5rrfQUs3T5NapBsmYN1U79ch8qxCpGxTmE6RVmFpGNZ",
+                                    "key": {
+                                        "bytes": "766572792d74656e6e6973"
+                                    },
+                                    "value": {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "prim": "Pair",
+                                                "args": [
+                                                    {
+                                                        "int": "1643750443"
+                                                    },
+                                                    []
+                                                ]
+                                            },
+                                            {
+                                                "int": "2739726027"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "action": "update",
+                                    "big_map": "44544",
+                                    "key_hash": "expruyXPRe1UdXncdCZvKxdBozHtzybpm6bRyby4pPTx9Bnuk43Y2m",
+                                    "key": {
+                                        "bytes": "cece9b24defac529b30249a0a7e7b5e0285bcf64cd7a73b97242f088865ab29ef44926b8ef5b202533fe84043ac074eefc8d1d71ad6fa1ded68d7f2e01533d84"
+                                    }
+                                }
+                            ],
+                            "balance_updates": [
+                                {
+                                    "kind": "contract",
+                                    "contract": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov",
+                                    "change": "-3750"
+                                },
+                                {
+                                    "kind": "contract",
+                                    "contract": "KT1HeaymSPcrYCfA9tuzfA2RfoF764eLe6cf",
+                                    "change": "-1000000"
+                                },
+                                {
+                                    "kind": "contract",
+                                    "contract": "KT1Vbc6Dq5nj56mgNdDcyCieYCZxEGV6fG9H",
+                                    "change": "1000000"
+                                }
+                            ],
+                            "consumed_gas": "43016",
+                            "consumed_milligas": "43015298",
+                            "storage_size": "133771",
+                            "paid_storage_size_diff": "15"
+                        }
+                    },
+                    {
+                        "kind": "transaction",
+                        "source": "KT1Vbc6Dq5nj56mgNdDcyCieYCZxEGV6fG9H",
+                        "nonce": 1,
+                        "amount": "0",
+                        "destination": "KT1DY7GJkw4dDZVZbsrLWXEpxFm62xXkqJRw",
+                        "parameters": {
+                            "entrypoint": "execute",
+                            "value": {
+                                "prim": "Pair",
+                                "args": [
+                                    {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "string": "SetChildRecord"
+                                            },
+                                            {
+                                                "bytes": "01e68325ef6a34ca01df9e046b4c3d6ec624885bd500"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "bytes": "0507070a0000000b766572792d74656e6e697307070a0000000664656c7068690707030607070a0000001600004b0ca67d26d52d33e75a859a6332a9ffcb9d81a307070200000000050900ab90cd9f0c"
+                                    }
+                                ]
+                            }
+                        },
+                        "result": {
+                            "status": "applied",
+                            "storage": {
+                                "prim": "Pair",
+                                "args": [
+                                    {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "int": "44535"
+                                            },
+                                            {
+                                                "prim": "Pair",
+                                                "args": [
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "int": "44536"
+                                                                    },
+                                                                    {
+                                                                        "int": "44537"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "prim": "Pair",
+                                                                "args": [
+                                                                    {
+                                                                        "int": "44538"
+                                                                    },
+                                                                    {
+                                                                        "bytes": "000068a52a1d7406ff5feeae3571b147b395da14fb50"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "int": "44539"
+                                                            },
+                                                            {
+                                                                "int": "44540"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    [
+                                        {
+                                            "bytes": "012711fbe46da89873cea1e8929981741a7b3e15d300"
+                                        },
+                                        {
+                                            "bytes": "013ebf18448ff3c91ce97aee4197d6cd0ae38d46dc00"
+                                        },
+                                        {
+                                            "bytes": "014066907e0720fcef1270cf07bba39c2400fa44da00"
+                                        },
+                                        {
+                                            "bytes": "0155b7720b12396fc028328d98b6afee5fe67c62b700"
+                                        },
+                                        {
+                                            "bytes": "01a706e821f8f0c9a15efc63070a9f23605230e1bc00"
+                                        },
+                                        {
+                                            "bytes": "01e02095af7e6900d07249a972517d9966bf868b1800"
+                                        },
+                                        {
+                                            "bytes": "01e68325ef6a34ca01df9e046b4c3d6ec624885bd500"
+                                        },
+                                        {
+                                            "bytes": "01f21a5bca6915130ca9d912772e2dfc9dc4a8c5be00"
+                                        },
+                                        {
+                                            "bytes": "01fa3a9bc2f6a2527a202d39e645cc75977606ddb200"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "big_map_diff": [
+                                {
+                                    "action": "update",
+                                    "big_map": "44539",
+                                    "key_hash": "expru4qFUkQJkey3UYAF31ZAqSJf4aRM4rjpbTrUKUZEzJiErSj2F7",
+                                    "key": {
+                                        "bytes": "766572792d74656e6e69732e64656c706869"
+                                    },
+                                    "value": {
+                                        "prim": "Pair",
+                                        "args": [
+                                            {
+                                                "prim": "Pair",
+                                                "args": [
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "prim": "None"
+                                                            },
+                                                            []
+                                                        ]
+                                                    },
+                                                    {
+                                                        "prim": "Pair",
+                                                        "args": [
+                                                            {
+                                                                "prim": "Some",
+                                                                "args": [
+                                                                    {
+                                                                        "bytes": "766572792d74656e6e69732e64656c706869"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            []
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "prim": "Pair",
+                                                "args": [
+                                                    {
+                                                        "int": "2"
+                                                    },
+                                                    {
+                                                        "bytes": "00004b0ca67d26d52d33e75a859a6332a9ffcb9d81a3"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "action": "update",
+                                    "big_map": "44537",
+                                    "key_hash": "expru4qFUkQJkey3UYAF31ZAqSJf4aRM4rjpbTrUKUZEzJiErSj2F7",
+                                    "key": {
+                                        "bytes": "766572792d74656e6e69732e64656c706869"
+                                    },
+                                    "value": {
+                                        "int": "1643750443"
+                                    }
+                                }
+                            ],
+                            "balance_updates": [
+                                {
+                                    "kind": "contract",
+                                    "contract": "tz1SUrXU6cxioeyURSxTgaxmpSWgQq4PMSov",
+                                    "change": "-53000"
+                                }
+                            ],
+                            "consumed_gas": "30447",
+                            "consumed_milligas": "30446252",
+                            "storage_size": "333361",
+                            "paid_storage_size_diff": "212"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "signature": "sigSzDHvnFbZYrM5n6tN8p3fr5vyLV1CndhpQGiDZTMHv8Fkw5YNvPCLHxskSn1tywSaYCNX53BrMmheUA42SbriEuSsk3Ev"
+}

@@ -1,0 +1,9 @@
+node_modules/
+.vscode/
+lib/
+dist/
+.env
+db/
+
+log-console.txt
+log-error.txt
