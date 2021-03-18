@@ -50,7 +50,7 @@ process.on('SIGINT', () => {
 
 // Notify for any unexpected crashes
 process.on('uncaughtException', async (err) => {
-    console.error('uncaughtException', err.name, err.message)
+    console.error(new Date().toISOString(), 'uncaughtException', err.name, err.message)
     console.error(err.stack)
 
     // Notify Group on Slack that this indexer crashed

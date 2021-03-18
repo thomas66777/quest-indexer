@@ -8,6 +8,7 @@ import { getOperationInBlockByHash, RpcUtil } from './utils-rpc'
 import { secretKeyToKeyPair } from './utils-tezos-keys'
 import assert from 'assert'
 import { InMemorySigner } from '@taquito/signer'
+import { copy } from 'copy-anything'
 
 export class TezosBroadcaster {
     readonly db: Database
@@ -82,25 +83,6 @@ export class TezosBroadcaster {
                     // no keys for signing; skip
                     if (!this.mapContractGame.has(contractFA2)) { continue }
 
-                    // waiting for confirmations
-
-                    // get the contract and signer
-                    const contract = this.mapContractGame.get(contractFA2)
-                    const tezos_signer = aryTransferFA[0].tezos_signer
-
-                    // create the transfer trx
-                    const txs: IFa2Tx[] = []
-                    for (const b of aryTransferFA) {
-                        txs.push({ amount: 1, to_: b.reward_account, token_id: b.token_id, })
-                    }
-
-                    const method = contract.methods.transfer([
-                        {
-                            from_: tezos_signer,
-                            txs,
-                        }
-                    ])
-
                     // update status to mempool even before it really is so it never accidentally sends twice
                     const aryRewardIds = aryBroadcast.map<string>(f => f.id)
                     this.db.prepare(`
@@ -109,10 +91,10 @@ export class TezosBroadcaster {
                     where id in (${aryRewardIds.join(',')})
                     `).run({ reward_status: REWARD_STATUS.MEMORY_POOL })
 
-                    console.log(new Date().toISOString(), `broadcaster: ${method.toTransferParams().to} automatically sending batch of ${txs.length} FA2 tokens`)
+                    console.log(new Date().toISOString(), `broadcaster: ${contractFA2} automatically sending batch of ${aryTransferFA.length} FA2 tokens`)
 
                     // send off to taquito for on chain injection and confirmation; no await
-                    this.transferFA2(method, aryRewardIds)
+                    this.transferFA2(contractFA2, aryTransferFA, aryRewardIds)
                 }
 
 
@@ -125,9 +107,29 @@ export class TezosBroadcaster {
         }
         global['polling_counter']--
     }
-    async transferFA2(method: ContractMethod<ContractProvider>, aryRewardIds: string[]) {
+    async transferFA2(contractFA2: string, aryTransferFA: any[], aryRewardIds: string[]) {
         global['polling_counter']++
         try {
+            // get the contract and signer
+            const contract = this.mapContractGame.get(contractFA2)
+            const tezos_signer = aryTransferFA[0].tezos_signer
+
+            // create the transfer trx
+            const txs: IFa2Tx[] = []
+            for (const b of aryTransferFA) {
+                txs.push({ amount: 1, to_: b.reward_account, token_id: b.token_id, })
+            }
+
+            const methodBase = contract.methods.transfer([
+                {
+                    from_: tezos_signer,
+                    txs,
+                }
+            ])
+
+            // need a new memory object for method to catch parallel subscribe errors
+            const method = copy(methodBase, { nonenumerable: true })
+
             // inject the transfer method
             const op = await method.send()
 
@@ -147,7 +149,9 @@ export class TezosBroadcaster {
             // wait until confirmed in block for fitness level
             const fitness = Number(process.env.FITNESS_LEVEL || 3)
             const timeoutSecs = Number(process.env.TAQUITO_TIMEOUT || ((fitness + 2) * 60))
-            const block_level = (await op.confirmation(fitness, 10, timeoutSecs)) - (fitness - 1) // need to adj; see taquito/src/operations/operations.ts
+            // const block_level = (await op.confirmation(fitness, 10, timeoutSecs)) - (fitness - 1) // need to adj; see taquito/src/operations/operations.ts
+            await op.confirmation(fitness, 10, timeoutSecs)
+            const block_level = op.includedInBlock
             console.log(new Date().toISOString(), `broadcaster: ${method.toTransferParams().to} ${op.hash} confirmed at block: ${block_level}`)
             const block = await this.rpcClient.getBlock(block_level)
 
