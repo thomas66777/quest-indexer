@@ -12,6 +12,12 @@ const args = argv.option([
         type: 'string',
         description: 'block level to start indexing',
         example: '--block-start=500000'
+    }, {
+        name: 'db-schema',
+        short: 'db',
+        type: 'string',
+        description: 'refresh the db schema if changes made to ./scripts/db_schema.sql',
+        example: '--dbschema'
     }
 ]).run()
 
@@ -129,7 +135,7 @@ async function main() {
 
     const db: sqlite3.Database = new sqlite3(dbPath, { fileMustExist: true })
     // no harm to run this again if any changes
-    if (args.options['dbschema']) {
+    if (args.options['db-schema']) {
         db.exec(fs.readFileSync('./scripts/db_schema.sql', 'utf8'))
     }
     const dbStatus = db.prepare('select * from indexer_status').get()

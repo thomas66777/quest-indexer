@@ -3,12 +3,13 @@ authors = ["Thomas Powers"]
 language = "en"
 multilingual = false
 src = "src"
-description = "The example book covers examples."
-title = "mdbook-test"
+description = "Explanation of the Tezos Quest Indexer."
+title = "Quest Indexer"
 
 [output.html]
 theme = "src/theme"
 default-theme = "rust"
+# default-theme = "ayu"
 
 # [output.epub]
 

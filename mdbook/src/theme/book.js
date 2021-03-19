@@ -1,5 +1,12 @@
 "use strict";
-
+const anchors = document.querySelectorAll('a');
+anchors.forEach((a) => {
+  const isHttp = a.href.substr(0,4).toLowerCase() == 'http'
+  if(isHttp) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+  }
+});
 // Fix back button cache problem
 window.onunload = function () { };
 

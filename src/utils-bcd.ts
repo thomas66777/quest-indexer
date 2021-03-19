@@ -56,8 +56,8 @@ export interface ValueValue {
     children: any[];
 }
 
-export async function getBigMapAtBlockLevel(network: 'delphinet' | 'mainnet', contractAddress: string, bigmapName: string, blockLevel: number): Promise<IBCDBigMap> {
-    const urlPrefix = 'https://better-call.dev/v1/'
+export async function getBigMapAtBlockLevel(network: 'delphinet' | 'edo2net' | 'mainnet', contractAddress: string, bigmapName: string, blockLevel: number): Promise<IBCDBigMap> {
+    const urlPrefix = process.env.BETTER_CALL_DEV_ENDPOINT || 'https://better-call.dev/v1/'
 
     const storage: IBCDStorage = (await axios.get(`${urlPrefix}contract/${network}/${contractAddress}/storage`)).data
     const ptr = storage.children.find(c => c.name == bigmapName)
