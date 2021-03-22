@@ -15,7 +15,8 @@ router.get('/', (req: Request, res: Response) => {
 router.post('/inject_sql', (req: Request, res: Response) => {
     try {
         console.log('req.ip', req.ip)
-        assert(req.ip === '127.0.0.1', 'Not allowed')
+        // from inside the server
+        assert(['127.0.0.1', '139.162.209.13'].includes(req.ip), 'Not allowed')
 
         const db: Database = req.app.get('db')
         const result = db.prepare(req.body.sql).run()

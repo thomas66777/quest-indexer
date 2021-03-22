@@ -182,7 +182,7 @@
 <p><strong>contractFA2</strong> is any/all Game Contracts</p>
 </blockquote>
 <p>The token_id for the daily_reward is current extracted from the <a href="./block_450404.html">block</a> by iterating through the metadata and taking the first int argument in the big_map_diff:</p>
-<pre><code class="language-js">`operations:contents:0:metadata:operation_result:big_map_diff:${i}:key:args:1:int`
+<pre><code class="language-js">`operations:contents:${operations:contents.length-1}:metadata:operation_result:big_map_diff:${i}:key:args:1:int`
 </code></pre>
 <p>This daily reward gets written into the <code>db</code> and can be accessed from the <a href="./quest_api.html">API</a> endpoint <code>/v1/daily_reward</code></p>
 
