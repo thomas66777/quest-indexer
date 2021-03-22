@@ -56,23 +56,34 @@ export class TezosBroadcaster {
             try {
                 // added in query to not include any signers that have mempool status so we dont resend
                 const aryBroadcast = this.db.prepare(`
-                select ir.id, g.tezos_signer, g.tezos_contract_fa2, ir.block_level, ir.reward_account, ir.token_id
-                from (
+                WITH ir AS (
                     select *
                     from indexer_reward ir
                     where reward_status = :reward_status
-                ) ir
-                join (
+                ), g as (
                     select * from game where tezos_signer != ''
-                ) g on ir.game_id = g.game_id
-                where g.tezos_signer not in (
+                ), ir_mem as (
                     select g.tezos_signer 
                     from indexer_reward ir
-                    join game g on g.game_id = ir.game_id 
+                    join g on g.game_id = ir.game_id 
                     where reward_status = :reward_mempool
                     group by g.tezos_signer 
+                ), q as (
+                    select g.game_id, ir.id, g.tezos_signer, g.tezos_contract_fa2, ir.block_level, ir.reward_account, ir.token_id
+                    from ir
+                    join g on ir.game_id = g.game_id
+                    where g.tezos_signer not in (
+                        select tezos_signer from ir_mem
+                    )
                 )
-                order by g.tezos_contract_fa2, ir.block_level asc
+                select q.*
+                from (
+                    SELECT min(game_id) as game_id, tezos_signer
+                    from q
+                    group by tezos_signer
+                ) ts
+                join q on q.game_id = ts.game_id and q.tezos_signer = ts.tezos_signer
+                order by tezos_contract_fa2, block_level asc
                 `).all({ reward_status: REWARD_STATUS.AWAITING_ADMIN_TRANSFER, reward_mempool: REWARD_STATUS.MEMORY_POOL })
 
                 // seperate by fa2 contract
