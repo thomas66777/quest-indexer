@@ -201,6 +201,10 @@ export class TezosPoller {
                         const quest_id = getQuestId(game_id, reward)
                         // get an rng from the operation signature plus so that it is totally deterministic
                         const rngToken = getRngTokenFromOperationHash(this.db, `${operation.hash}${block.header.level}${quest_id}`, game_id)
+                        if (!rngToken) {
+                            console.error(new Date().toISOString(),`cannot reward game_id: ${game_id} ${operation.hash} as no tokens are configured`)
+                            continue
+                        }
                         // Can only have one game_id and filter_id combination
                         batchTrxs.push({
                             sql: `

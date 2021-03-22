@@ -19,6 +19,10 @@ insert or ignore into game_tokens values
 	(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),
 	(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20);
 
+insert or ignore into game_tokens values
+	(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,10),
+	(3,11),(3,12),(3,13),(3,14),(3,15),(3,16),(3,17),(3,18),(3,19),(3,20);
+
 INSERT or ignore INTO operation_filter (game_id,name,description,reward,criteria) VALUES
 	 (2,'auction','','SPECIAL:auction','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:destination":"KT1WkhPFfhydqqPXWrYFkN9gfpgus1XXCeHy","operations:contents:kind":"transaction","operations:contents:parameters:entrypoint":"resolve"}'),
      (1,'transfer','transfer over 1 XTZ','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:amount":{"eval":"value >= 1000000"}}'),
