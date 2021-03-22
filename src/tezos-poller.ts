@@ -142,7 +142,7 @@ export class TezosPoller {
                         name: 'daily reward',
                         reward: 'operations:contents:0:source',
                         criteria: {
-                            'operations:chain_id': 'NetXm8tYqnMWky1',
+                            'operations:chain_id': process.env.CHAIN_ID,
                             'operations:contents:kind': 'transaction',
                             'operations:contents:amount': { 'eval': 'value == 0' },
                             'operations:contents:parameters:entrypoint': 'reward',
