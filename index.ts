@@ -91,7 +91,8 @@ export const paramsDefault = {
 async function main() {
     // const rpcClient = new RpcClient('https://rpc.tzbeta.net:443', 'NetXdQprcVkpaWU')
     // const rpcClient = new RpcClient('https://rpctest.tzbeta.net', 'NetXm8tYqnMWky1')
-    // const block = await rpcClient.getBlock({ block: '450404' })
+    // const rpcClient = new RpcClient('https://edonet.smartpy.io', 'NetXSgo1ZT2DRUG')
+    // const block = await rpcClient.getBlock({ block: '106434' })
     // console.log('rpc url:', rpcClient.getRpcUrl())
     // console.log()
 

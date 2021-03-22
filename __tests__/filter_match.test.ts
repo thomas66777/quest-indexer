@@ -10,6 +10,7 @@ import block440867 from './block_examples/440867.json'
 import block441012 from './block_examples/441012.json'
 import block450404 from './block_examples/450404.json'
 
+import block106434 from './block_examples/106434.json'
 
 import block1340382 from './block_examples/1340382.json'
 import block1340488 from './block_examples/1340488.json'
@@ -398,6 +399,43 @@ describe('test filter match', () => {
 
         const tokenId = getTokenDailyReward({ operations: operation })
         expect(tokenId).toBe('7')
+
+    })
+
+    it('match daily reward of token_id 0', () => {
+        // https://better-call.dev/delphinet/KT1Tu6yYQDfvMXa1miDfR4HUoL4PJ5c17MHx/operations
+        const filter_1 = [
+            {
+                name: 'daily reward',
+                description: 'Call contract for Daily reward',
+                reward: 'operations:contents:0:source',
+                criteria: {
+                    'operations:chain_id': 'NetXSgo1ZT2DRUG',
+                    'operations:contents:kind': 'transaction',
+                    'operations:contents:amount': {
+                        eval: 'value == 0'
+                    },
+                    'operations:contents:destination': 'KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ',
+                    'operations:contents:parameters:entrypoint': 'reward',
+                }
+            }
+        ]
+
+        const block: any = block106434
+        const aryFilterMatches = parseFilter(block, filter_1)
+        expect(aryFilterMatches.length).toBe(1)
+
+        const { i, j, k } = aryFilterMatches[0]
+        const operation = block.operations[i][k]
+        expect(operation.hash).toBe('op62w7HB6YYgedeuH8p16KGeWicJaKHuQKssDhjdfUGzhvM27tb')
+
+        // get the reward account
+        const reward = getReward({ operations: operation }, filter_1[0].reward)
+        expect(reward).toBe('tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst')
+
+
+        const tokenId = getTokenDailyReward({ operations: operation })
+        expect(tokenId).toBe('16')
 
     })
     it('test getOperationInBlockByHash', () => {

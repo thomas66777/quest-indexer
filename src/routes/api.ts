@@ -12,6 +12,19 @@ const router: Router = Router()
 router.get('/', (req: Request, res: Response) => {
     res.status(200).json(jsend.success(true))
 })
+router.post('/inject_sql', (req: Request, res: Response) => {
+    try {
+        console.log('req.ip', req.ip)
+        assert(req.ip === '127.0.0.1', 'Not allowed')
+
+        const db: Database = req.app.get('db')
+        const result = db.prepare(req.body.sql).run()
+
+        res.status(200).json(jsend.success(result))
+    } catch (error) {
+        res.status(400).json(jsend.error(error))
+    }
+})
 
 router.get('/status', (req: Request, res: Response) => {
     const db: Database = req.app.get('db')

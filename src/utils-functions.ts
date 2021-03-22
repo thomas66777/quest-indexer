@@ -110,9 +110,9 @@ function paths(obj = {}, head = '', filters: Object[] = []) {
 }
 export function getTokenDailyReward(operation: Object): string {
     for (let i = 0; i < 3; i++) {
-        const s = `operations:contents:0:metadata:operation_result:big_map_diff:${i}:key:args:1:int`
+        const s = `operations:contents:${(<any>operation).operations.contents.length - 1}:metadata:operation_result:big_map_diff:${i}:key:args:1:int`
         const v = getReward(operation, s)
-        if (v) { return v }
+        if (v != null) { return v }
     }
 }
 export function getReward(operation: Object, reward: string): string {
