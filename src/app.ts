@@ -48,7 +48,7 @@ export class AppServer {
         this._server.listen(port, ip, () => {
             console.info(`Server running on ${ip}:${port}`)
         })
-
+        this._app.set('trust proxy', true)
         this._app.set('db', db)
         this._app.set('mapContracts', new Map())
     }
