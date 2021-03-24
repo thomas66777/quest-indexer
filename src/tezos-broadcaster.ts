@@ -179,7 +179,7 @@ export class TezosBroadcaster {
             where reward_hash = :reward_hash
             `).run({
                 reward_hash: op.hash,
-                reward_status: isError ? REWARD_STATUS.CONFIRMED : REWARD_STATUS.ERROR,
+                reward_status: isError ? REWARD_STATUS.ERROR : REWARD_STATUS.CONFIRMED,
                 reward_block_level: block.header.level,
                 reward_block_timestamp: block.header.timestamp,
                 reward_block_status: opStatus,
