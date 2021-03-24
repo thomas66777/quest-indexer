@@ -197,7 +197,7 @@ export class TezosPoller {
                             }
                         })
                     } else {
-                        console.log('reward operation', reward, filters[j].name)
+                        // console.log('reward operation', reward, filters[j].name)
                         const quest_id = getQuestId(game_id, reward)
                         // get an rng from the operation signature plus so that it is totally deterministic
                         const rngToken = getRngTokenFromOperationHash(this.db, `${operation.hash}${block.header.level}${quest_id}`, game_id)
@@ -209,8 +209,10 @@ export class TezosPoller {
                         batchTrxs.push({
                             sql: `
                             insert or ignore into indexer_reward (game_id, quest_id, token_id, reward_status, reward_account, filter_id, time_stamp, block_level, operation_idx, chain_id, hash)
-                            values (:game_id, :quest_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
+                            select :game_id, :quest_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash
+                            where exists (select 1 from daily_reward where quest_id = :quest_id)
                             `,
+                            // values (:game_id, :quest_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
                             params: {
                                 game_id: game_id,
                                 quest_id: quest_id,
