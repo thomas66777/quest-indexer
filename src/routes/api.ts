@@ -123,7 +123,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
                 select * from operation_filter where game_id = :game_id
             ) fil
             left join (
-                select * from indexer_reward where quest_id = :quest_id
+                select * from indexer_reward where game_id = :game_id and quest_id = :quest_id
             ) ir on ir.filter_id = fil.filter_id and ir.game_id = fil.game_id
             left join reward_status rs on rs.status_id = ir.reward_status
             order by COALESCE(reward_status,0) desc, ir.block_level desc, fil.name

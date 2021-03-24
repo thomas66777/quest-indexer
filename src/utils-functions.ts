@@ -1,4 +1,4 @@
-import { BlockHeaderResponse, BlockResponse } from '@taquito/rpc'
+import { BlockHeaderResponse, BlockMetadata, BlockResponse, OperationContentsAndResultMetadataTransaction, OperationEntry } from '@taquito/rpc'
 import Database from 'better-sqlite3'
 import Slack from 'node-slack'
 import { RpcUtil } from './utils-rpc'
@@ -167,4 +167,8 @@ export async function sendSlackMessage(message: string) {
             })
         }
     })
+}
+
+export function getMetadataFromOperation(blockOperation: OperationEntry): OperationContentsAndResultMetadataTransaction {
+    return (<any>blockOperation).contents[blockOperation.contents.length - 1].metadata
 }

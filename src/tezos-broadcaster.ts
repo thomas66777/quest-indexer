@@ -3,7 +3,7 @@ import { ContractAbstraction, ContractMethod, ContractProvider, TezosToolkit } f
 import { Database } from 'better-sqlite3'
 import { REWARD_STATUS } from './utils-db'
 import { IFa2Tx } from './utils-fa2'
-import { parseFilter, sendSlackMessage, sleep } from './utils-functions'
+import { getMetadataFromOperation, parseFilter, sendSlackMessage, sleep } from './utils-functions'
 import { getOperationInBlockByHash, RpcUtil } from './utils-rpc'
 import { secretKeyToKeyPair } from './utils-tezos-keys'
 import assert from 'assert'
@@ -168,8 +168,8 @@ export class TezosBroadcaster {
             assert(blockOperation, `Cannot find op ${op.hash} in block ${block_level}`)
 
             // was is successful or error
-            const opStatus = (<any>blockOperation)?.contents[0]?.metadata?.operation_result?.status
-            const opErrors = JSON.stringify((<any>blockOperation)?.contents[0]?.metadata?.operation_result?.errors) || null
+            const opStatus = getMetadataFromOperation(blockOperation)?.operation_result?.status
+            const opErrors = JSON.stringify(getMetadataFromOperation(blockOperation)?.operation_result?.errors) || null
 
             // update again
             const isError = opStatus !== 'applied'

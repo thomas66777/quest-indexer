@@ -130,5 +130,11 @@ CREATE INDEX IF NOT EXISTS "indexer_reward_block_level_IDX" ON "indexer_reward" 
 CREATE INDEX IF NOT EXISTS "indexer_reward_status_IDX" ON "indexer_reward" (
 	"reward_status"	DESC
 );
+CREATE INDEX IF NOT EXISTS "indexer_game_reward_IDX" ON "indexer_reward" (
+	"game_id", "reward_account"
+);
+CREATE INDEX IF NOT EXISTS "indexer_game_quest_IDX" ON "indexer_reward" (
+	"game_id", "quest_id"
+);
 
 COMMIT;
