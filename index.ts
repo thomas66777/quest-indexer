@@ -37,7 +37,7 @@ import { RpcClient } from '@taquito/rpc'
 import Slack from 'node-slack'
 import sqlite3 from 'better-sqlite3'
 import { bufferToId } from './src/utils-crypto'
-import { sendSlackMessage, sleep } from './src/utils-functions'
+import { getMetadataFromOperation, sendSlackMessage, sleep } from './src/utils-functions'
 import fs from 'fs'
 import path from 'path'
 import { secretKeyToKeyPair } from './src/utils-tezos-keys'
@@ -88,12 +88,24 @@ export const paramsDefault = {
 }
 
 
+import b108503 from './__tests__/block_examples/108503.json'
 async function main() {
     // const rpcClient = new RpcClient('https://rpc.tzbeta.net:443', 'NetXdQprcVkpaWU')
     // const rpcClient = new RpcClient('https://rpctest.tzbeta.net', 'NetXm8tYqnMWky1')
     // const rpcClient = new RpcClient('https://edonet.smartpy.io', 'NetXSgo1ZT2DRUG')
-    // const block = await rpcClient.getBlock({ block: '106434' })
+    // const block = await rpcClient.getBlock({ block: '108503' })
     // console.log('rpc url:', rpcClient.getRpcUrl())
+    // for (const ops of b108503.operations) {
+    //     for (const blockOperation of <any>ops) {
+    //         if (blockOperation?.hash == 'op6agAPhGLy7oZ6ZmoCYWDWCqvskGjpqsYhrZvvUGeSxxK2NjQQ') {
+    //             const meta = getMetadataFromOperation(blockOperation)
+    //             console.log(meta)
+    //             const opStatus = getMetadataFromOperation(blockOperation)?.operation_result?.status
+    //             const opErrors = JSON.stringify(getMetadataFromOperation(blockOperation)?.operation_result?.errors) || null
+    //             console.log(meta)
+    //         }
+    //     }
+    // }
     // console.log()
 
     // validate signing key

@@ -137,4 +137,9 @@ CREATE INDEX IF NOT EXISTS "indexer_game_quest_IDX" ON "indexer_reward" (
 	"game_id", "quest_id"
 );
 
+CREATE INDEX IF NOT EXISTS "daily_reward_quest_IDX" ON "daily_reward" (
+	"quest_id"
+);
+
+
 COMMIT;
