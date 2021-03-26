@@ -455,6 +455,85 @@
                     }
                 }
             }
+        },
+        "/remove_payouts/{game_id}/{pkh}": {
+            "delete": {
+                "summary": "removes rewards that have already happened so it can be rewarded again for testing purposes",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "game_id in the system",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pkh",
+                        "in": "path",
+                        "description": "The tezos address (tz1...) of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/set_filter_dates": {
+            "post": {
+                "summary": "updates dates in operation filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "filter_id": {
+                                        "type": "number",
+                                        "example": "12"
+                                    },
+                                    "time_start": {
+                                        "type": "string",
+                                        "example": "2021-03-26T23:07:04.405Z"
+                                    },
+                                    "time_end": {
+                                        "type": "string",
+                                        "example": "2021-03-26T23:07:04.405Z"
+                                    }
+                                },
+                                "required": [
+                                    "filter_id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     }
 }

@@ -260,6 +260,40 @@ router.post('/operation_filter/add', (req: Request, res: Response) => {
 
     }
 })
+router.post('/set_filter_dates', (req: Request, res: Response) => {
+    try {
+        const filter_id = req.body.filter_id
+        const timeStart = req.body.time_start
+        const timeEnd = req.body.time_end
 
+        assert(filter_id, 'missing required params')
+        const time_start = timeStart ? new Date(timeStart).toISOString() : null
+        const time_end = timeEnd ? new Date(timeEnd).toISOString() : null
+
+        const db: Database = req.app.get('db')
+        const result = db
+            .prepare('update operation_filter set time_start = :time_start, time_end = :time_end where filter_id = :filter_id')
+            .run({ filter_id, time_start, time_end })
+
+        res.status(200).json(jsend.success(result.changes))
+    } catch (error) {
+        res.status(400).json(jsend.error(error))
+    }
+})
+router.delete('/remove_payouts/:game_id?/:pkh?', (req: Request, res: Response) => {
+    try {
+        const game_id = <string>req.query.game_id || req.params.game_id
+        const pkh = <string>req.query.pkh || req.params.pkh
+
+        assert(game_id && pkh, 'missing required params')
+
+        const db: Database = req.app.get('db')
+        const result = db.prepare('delete from indexer_reward where game_id = :game_id and quest_id = :quest_id').run({ game_id, quest_id: getQuestId(game_id, pkh) })
+
+        res.status(200).json(jsend.success(result.changes))
+    } catch (error) {
+        res.status(400).json(jsend.error(error))
+    }
+})
 
 export const ApiController: Router = router
