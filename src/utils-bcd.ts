@@ -63,14 +63,21 @@ export async function getBigMapAtBlockLevel(network: 'delphinet' | 'edo2net' | '
     const ptr = storage.children.find(c => c.name == bigmapName)
     assert(ptr, `cannot find name ${bigmapName} in contract ${contractAddress}, in network ${network}`)
 
-    const diffCount = Number((await axios.get(`${urlPrefix}bigmap/${network}/${ptr.value}/count`)).data.count)
-    const aryBigMapKeys: IBCDBigMapKeys[] = (await axios.get(`${urlPrefix}bigmap/${network}/${ptr.value}/keys`)).data
-    // assert(diffCount == aryBigMapKeys.length, 'mismatch key length to diff count')
+    let offset = 0
+    let expr: string
+    while (true) {
+        const url = `${urlPrefix}bigmap/${network}/${ptr.value}/keys?offset=${offset++}`
+        const { data } = await axios.get<IBCDBigMapKeys[]>(url)
+        assert(data.length, `no data found: ${url}`)
+        const key = data.find(k => k.data.level == blockLevel)
+        if (key) {
+            expr = key.data.key_hash
+            break
+        }
+        assert(data[data.length - 1].data.level > blockLevel, `cannot find BigMap blockLevel ${blockLevel} in contract ${contractAddress}, in network ${network}`)
+    }
 
-    const key = aryBigMapKeys.find(k => k.data.level == blockLevel)
-    assert(key, `cannot find key ${bigmapName} in contract ${contractAddress}, in network ${network}, at this blockLevel ${blockLevel}`)
-
-    const bigMap = (await axios.get(`${urlPrefix}bigmap/${network}/${ptr.value}/keys/${key.data.key_hash}`)).data
+    const bigMap = (await axios.get(`${urlPrefix}bigmap/${network}/${ptr.value}/keys/${expr}`)).data
     return bigMap
 }
 

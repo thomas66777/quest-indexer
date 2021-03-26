@@ -1,7 +1,9 @@
-import { BlockHeaderResponse, BlockMetadata, BlockResponse, OperationContentsAndResultMetadataTransaction, OperationEntry } from '@taquito/rpc'
+import { BlockHeaderResponse, BlockMetadata, BlockResponse, ContractResponse, MichelsonV1Expression, MichelsonV1ExpressionExtended, OperationContentsAndResultMetadataTransaction, OperationEntry } from '@taquito/rpc'
 import Database from 'better-sqlite3'
 import Slack from 'node-slack'
 import { RpcUtil } from './utils-rpc'
+import { Schema } from '@taquito/michelson-encoder'
+import { ContractProvider } from '@taquito/taquito'
 
 export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -108,6 +110,53 @@ function paths(obj = {}, head = '', filters: Object[] = []) {
     // }, []);
     // return x
 }
+// export function getTokenDailyReward(contract: ContractResponse, meta: OperationContentsAndResultMetadataTransaction): string {
+//     const schemaStorage = Schema.fromRPCResponse(contract)
+
+
+//     // // parse all the storage
+//     // const storage = (<any>contract).script.code.find(x => x.prim === 'storage')!.args[0]
+//     // const schemaStorage = new Schema(storage)
+//     const objSchema = schemaStorage.ExtractSchema()
+//     const st = schemaStorage.Execute(meta.operation_result.storage)
+//     const keyTokenMetadata: string = st?.assets?.token_metadata
+//     // const xyz = schemaStorage.FindFirstInTopLevelPair(meta.operation_result.storage, keyTokenMetadata)
+//     const typeOfValueToFind = {
+//         prim: 'big_map',
+//         args: [{ prim: 'string' }, { prim: 'bytes' }],
+//         annots: ['%metadata']
+//     }
+//     const xyz = schemaStorage.FindFirstInTopLevelPair(meta.operation_result.storage, typeOfValueToFind)
+    
+//     console.log(keyTokenMetadata)
+//     console.log(JSON.stringify(st, null, 2))
+
+//     // const bm = schemaStorage.ExecuteOnBigMapDiff(meta.operation_result.big_map_diff)
+//     // {
+//     //     "prim": "Pair",
+//     //     "args": [
+//     //       {
+//     //         "bytes": "0000040b740127d2e2bc9e45bb8f07e8ca20e3c96c4a"
+//     //       },
+//     //       {
+//     //         "int": "10"
+//     //       }
+//     //     ]
+//     //   }
+
+//     // Extract schema to object
+//     // const objSchema = schema.ExtractSchema()
+//     // console.log(JSON.stringify(objSchema, null, 2))
+
+//     // parse the storage
+//     // const storage = contract.script.storage
+
+//     // const bm = schema.ExecuteOnBigMapValue({ "prim": "Pair", "args": [{ "prim": "Pair", "args": [{ "prim": "Some", "args": [{ "bytes": "7b2262616b65724e616d65223a2022457665727374616b65222c2262616b65724163636f756e74223a2022747a314d584672745a6f6158636b453431626a5543536a416a416170334146445372334e222c227265706f727465724163636f756e74223a2022222c226f70656e466f7244656c65676174696f6e223a202274727565222c2262616b65724f6666636861696e526567697374727955726c223a2022222c226665654d6f64656c223a207b227061796f75744163636f756e7473223a205b5d2c22666565223a20223130222c226d696e44656c65676174696f6e223a202230222c227061796f757444656c6179223a20362c227061796f75744672657175656e6379223a202231222c227061796f757446726571756e6563794d696e5061796f7574223a20302c226f76657244656c65676174696f6e223a203130302c226f76657244656c65676174696f6e5374616b6544696c7574696f6e223a20747275652c2262616b6572436861726765735061796f75745472616e73616374696f6e466565223a20747275652c227265776172647350616964223a207b22626c6f636b52657761726473223a20747275652c226d6973736564426c6f636b73223a2066616c73652c2273746f6c656e426c6f636b73223a20747275652c22656e646f72736552657761726473223a20747275652c226d6973736564456e646f7273656d656e7473223a2066616c73652c226c6f775072696f72697479456e646f72736550616964417346756c6c223a2066616c73652c227472616e73616374696f6e46656573223a20747275652c2261636375736174696f6e52657761726473223a20747275652c22616363757365644c6f73744465706f736974223a2066616c73652c22616363757365644c6f737452657761726473223a2066616c73652c22616363757365644c6f737446656573223a2066616c73652c22726576656c6174696f6e52657761726473223a20747275652c226d6973736564526576656c6174696f6e223a2066616c73652c226d6973736564526576656c6174696f6e46656573223a2066616c73657d7d7d" }] }, { "prim": "None" }] }, { "int": "1569309836" }] })
+
+//     console.log(JSON.stringify(bm, null, 2))
+//     console.log()
+
+// }
 export function getTokenDailyReward(operation: Object): string {
     for (let i = 0; i < 3; i++) {
         const s = `operations:contents:${(<any>operation).operations.contents.length - 1}:metadata:operation_result:big_map_diff:${i}:key:args:1:int`

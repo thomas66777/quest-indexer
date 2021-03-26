@@ -37,7 +37,7 @@ import { RpcClient } from '@taquito/rpc'
 import Slack from 'node-slack'
 import sqlite3 from 'better-sqlite3'
 import { bufferToId } from './src/utils-crypto'
-import { getMetadataFromOperation, sendSlackMessage, sleep } from './src/utils-functions'
+import { getMetadataFromOperation, getTokenDailyReward, sendSlackMessage, sleep } from './src/utils-functions'
 import fs from 'fs'
 import path from 'path'
 import { secretKeyToKeyPair } from './src/utils-tezos-keys'
@@ -88,21 +88,22 @@ export const paramsDefault = {
 }
 
 
-import b108503 from './__tests__/block_examples/108503.json'
 async function main() {
     // const rpcClient = new RpcClient('https://rpc.tzbeta.net:443', 'NetXdQprcVkpaWU')
     // const rpcClient = new RpcClient('https://rpctest.tzbeta.net', 'NetXm8tYqnMWky1')
     // const rpcClient = new RpcClient('https://edonet.smartpy.io', 'NetXSgo1ZT2DRUG')
-    // const block = await rpcClient.getBlock({ block: '108503' })
-    // console.log('rpc url:', rpcClient.getRpcUrl())
-    // for (const ops of b108503.operations) {
+    // const block = await rpcClient.getBlock({ block: '114969' })
+    // // console.log('rpc url:', rpcClient.getRpcUrl())
+    // for (const ops of block.operations) {
     //     for (const blockOperation of <any>ops) {
-    //         if (blockOperation?.hash == 'op6agAPhGLy7oZ6ZmoCYWDWCqvskGjpqsYhrZvvUGeSxxK2NjQQ') {
+    //         if (blockOperation?.hash == 'ooji3pGiTNQRBm468wVNmDsE48AKnLy67i1RWXZTcbUqs7f263h') {
     //             const meta = getMetadataFromOperation(blockOperation)
     //             console.log(meta)
     //             const opStatus = getMetadataFromOperation(blockOperation)?.operation_result?.status
     //             const opErrors = JSON.stringify(getMetadataFromOperation(blockOperation)?.operation_result?.errors) || null
     //             console.log(meta)
+    //             const contract = await rpcClient.getContract('KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ')
+    //             getTokenDailyReward(contract, meta)
     //         }
     //     }
     // }
@@ -154,8 +155,8 @@ async function main() {
     const dbStatus = db.prepare('select * from indexer_status').get()
     // const db = LevelUp(LevelDOWN(process.env.DB_PATH || './db'))
     // const dbStatus = await getOrNull(db, 'status')
-    const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
-    const tezosInjector = new TezosInjector(db, { ...params })
+    // const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
+    // const tezosInjector = new TezosInjector(db, { ...params })
 
 
     // Get the contract
