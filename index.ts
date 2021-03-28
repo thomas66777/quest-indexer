@@ -155,8 +155,8 @@ async function main() {
     const dbStatus = db.prepare('select * from indexer_status').get()
     // const db = LevelUp(LevelDOWN(process.env.DB_PATH || './db'))
     // const dbStatus = await getOrNull(db, 'status')
-    // const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
-    // const tezosInjector = new TezosInjector(db, { ...params })
+    const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
+    const tezosInjector = new TezosInjector(db, { ...params })
 
 
     // Get the contract
