@@ -16,7 +16,11 @@ export const REWARD_STATUS = Object.freeze({
 })
 
 export const parseSqlDate = (sqlDate: string) => {
-    return sqlDate = sqlDate ? new Date(sqlDate.replace(' ', 'T') + 'Z').toISOString() : null
+    if (sqlDate == null) {
+        return sqlDate
+    }
+
+    return sqlDate = sqlDate.substr(-1) === 'Z' ? sqlDate : new Date(sqlDate.replace(' ', 'T') + 'Z').toISOString()
 }
 export const parseIsActive = (time_start: string, time_end: string) => {
     const now = Date.now()
