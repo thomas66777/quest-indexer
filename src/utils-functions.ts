@@ -219,5 +219,5 @@ export async function sendSlackMessage(message: string) {
 }
 
 export function getMetadataFromOperation(blockOperation: OperationEntry): OperationContentsAndResultMetadataTransaction {
-    return (<any>blockOperation).contents.find(c => c.hasOwnProperty('metadata'))?.metadata
+    return (<any>blockOperation).contents.reverse().find(c => c.hasOwnProperty('metadata'))?.metadata
 }
