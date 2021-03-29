@@ -1,6 +1,6 @@
 import { getBlockHead, getReward, getTokenDailyReward, parseFilter, sendSlackMessage, sleep } from './utils-functions'
 import { dbTransactionBatch, handleOrphanBlock, ITransactionBatch, REWARD_STATUS } from './utils-db'
-import { BlockHeaderResponse, BlockResponse, RpcClient } from '@taquito/rpc'
+import { BlockHeaderResponse, BlockResponse, ContractResponse, RpcClient } from '@taquito/rpc'
 import { ContractAbstraction, ContractProvider, TezosToolkit } from '@taquito/taquito'
 import { InMemorySigner, importKey } from '@taquito/signer'
 import crypto from 'crypto'
@@ -15,7 +15,7 @@ import { getBigMapAtBlockLevel } from './utils-bcd'
 import { processAuction } from './special/auction'
 import { IBCDAuctionStorage, IBCDBigMapAuction } from './special/auctionInterfaceBigMap'
 import axios from 'axios'
-import { RpcUtil } from './utils-rpc'
+import { getLedgerMeta, RpcUtil } from './utils-rpc'
 
 export class TezosPoller {
     readonly chainId: string
@@ -40,6 +40,7 @@ export class TezosPoller {
     contractAction: ContractAbstraction<ContractProvider>
     mapAuction: Map<string, number> = new Map()
     contractAuctionAddress: string
+    mapContracts: Map<string, ContractResponse> = new Map()
     constructor(db: Database, params: {
         chainId?: string,
         rpcEndpoint?: string,
@@ -89,6 +90,11 @@ export class TezosPoller {
             this.contractAction = await tezosToolkit.contract.at(this.contractAuctionAddress)
         }
         /* end special logic */
+
+        // Load all the contracts
+        for (const tezos_contract_fa2 of this.db.prepare<string[]>('select tezos_contract_fa2 from game').pluck().get()) {
+            this.mapContracts.set('tezos_contract_fa2', await this.rpcClient.getContract(tezos_contract_fa2))
+        }
 
         // init blockHeadLevel to be same as start block just in case of error in the loop
         this.blockLevelHeader = await this.rpcClient.getBlockHeader()
@@ -177,11 +183,12 @@ export class TezosPoller {
                     } else if (filters[j].filter_type == 'DAILY') {
                         console.log('reward daily', reward, filters[j].name)
                         const quest_id = getQuestId(game_id, reward)
-                        const token_id = getTokenDailyReward({ operations: operation })
+                        const meta = getLedgerMeta(this.mapContracts.get(filters[j].filter_id), operation)
+                        const token_id = meta.find(m => m.address == reward)?.token_id || getTokenDailyReward({ operations: operation })
                         batchTrxs.push({
                             sql: `
-                            insert or ignore into daily_reward (game_id,quest_id,token_id,reward,time_stamp,block_level,operation_idx,chain_id,hash)
-                            values (:game_id,:quest_id,:token_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash)
+                            insert or ignore into daily_reward (game_id,quest_id,token_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
+                            values (:game_id,:quest_id,:token_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
                             `,
                             params: {
                                 game_id: game_id,
@@ -194,6 +201,7 @@ export class TezosPoller {
                                 operation_idx: i,
                                 chain_id: operation.chain_id,
                                 hash: operation.hash,
+                                meta: JSON.stringify(meta)
                             }
                         })
                     } else {
@@ -202,7 +210,7 @@ export class TezosPoller {
                         // get an rng from the operation signature plus so that it is totally deterministic
                         const rngToken = getRngTokenFromOperationHash(this.db, `${operation.hash}${block.header.level}${quest_id}`, game_id)
                         if (!rngToken) {
-                            console.error(new Date().toISOString(),`cannot reward game_id: ${game_id} ${operation.hash} as no tokens are configured`)
+                            console.error(new Date().toISOString(), `cannot reward game_id: ${game_id} ${operation.hash} as no tokens are configured`)
                             continue
                         }
                         // Can only have one game_id and filter_id combination

@@ -60,6 +60,7 @@
     "express": "^4.17.1",
     "jsend": "^1.1.0",
     "jsonfile": "^6.1.0",
+    "jsonpath-plus": "^5.0.4",
     "node-slack": "^0.0.7",
     "sotez": "^8.0.1",
     "swagger-jsdoc": "^6.0.2",

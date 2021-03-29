@@ -1,7 +1,9 @@
 import { BlockHeaderResponse, BlockResponse, ContractResponse, OperationEntry } from '@taquito/rpc'
 import axios from 'axios'
 import assert from 'assert'
-import { parseFilter } from './utils-functions';
+import { getMetadataFromOperation, parseFilter, sendSlackMessage } from './utils-functions'
+import { Schema } from '@taquito/michelson-encoder'
+import { JSONPath } from 'jsonpath-plus'
 
 // Doing this becasue the taqito rpc package does not handle http errors
 export class RpcUtil {
@@ -69,5 +71,52 @@ export function getOperationInBlockByHash(block: BlockResponse, hash: string): O
         return block_operation
     } else {
         return null
+    }
+}
+
+export interface IBigMapLedger {
+    address: string;
+    token_id: string;
+    value: string;
+}
+
+export function getLedgerMeta(contract: ContractResponse, operation: OperationEntry): IBigMapLedger[] {
+    try {
+        // Get the storage raw schema from the contract
+        const storage: any = (<any>contract).script.code.find((x: any) => x.prim === 'storage').args[0]
+        const schemaStorage = Schema.fromRPCResponse(contract)
+
+        // decode the storage schema to object
+        const schemaDecoded = schemaStorage.Execute(contract.script.storage)
+
+        // Get the ledger key pointer
+        const annotKey = 'ledger'
+        const ledgerMichelson = JSONPath({ path: `$..args[?(@.annots == '%${annotKey}')]`, json: storage })[0]
+        const ledgerPtr = JSONPath({ path: `$..${annotKey}`, json: schemaDecoded })[0]
+
+        // get the BigMap diff metadata from this operation
+        const meta = getMetadataFromOperation(operation)
+        const bigMapLedgerDiffs = meta.operation_result.big_map_diff.filter((bm: any) => bm?.big_map == ledgerPtr)
+
+        // Iterate through the Ledger BigMap Diffs and get the values
+        const ledgerSchema = new Schema(ledgerMichelson)
+        const bigMapDiffDecoded = ledgerSchema.ExecuteOnBigMapDiff(bigMapLedgerDiffs)
+        const ledgerBigMapDiffs: IBigMapLedger[] = []
+        for (const entry of bigMapDiffDecoded.entries()) {
+            // const keys = Object.keys(entry[0]).map(k => Number(k))
+            const address = entry[0]['0'].toString()
+            const token_id = entry[0]['1'].toString()
+            const value = entry[1].toString()
+            ledgerBigMapDiffs.push({
+                address, token_id, value,
+            })
+        }
+        // console.log('ledger => \n', JSON.stringify(entriesPairs, null, 2))
+        return ledgerBigMapDiffs
+    } catch (error) {
+        // If error dont crash, just return empty array and alert
+        console.error(new Date().toISOString(), `Daily reward unable to parse BigMap: ${error.message}`)
+        sendSlackMessage(`Daily reward unable to parse BigMap: \`${error.message}\``)
+        return []
     }
 }

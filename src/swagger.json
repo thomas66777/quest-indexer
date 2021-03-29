@@ -183,13 +183,25 @@
                                                 "id": 3,
                                                 "game_id": 3,
                                                 "quest_id": 2402671165,
-                                                "token_id": 17,
+                                                "token_id": 16,
                                                 "reward": "tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst",
                                                 "time_stamp": "2021-03-13T00:06:36Z",
                                                 "block_level": 509722,
                                                 "operation_idx": 3,
                                                 "chain_id": "NetXm8tYqnMWky1",
-                                                "hash": "onrjSNBLctVXE5acwscj2HX8CawVnyDCYVW285Mb4Q7fpn4i8cM"
+                                                "hash": "onrjSNBLctVXE5acwscj2HX8CawVnyDCYVW285Mb4Q7fpn4i8cM",
+                                                "meta": [
+                                                    {
+                                                        "address": "tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst",
+                                                        "token_id": "16",
+                                                        "value": "1"
+                                                    },
+                                                    {
+                                                        "address": "tz1ZufAMPExipHNGDUm88ZXJqn2fUi3V5hLd",
+                                                        "token_id": "16",
+                                                        "value": "49999"
+                                                    }
+                                                ]
                                             }
                                         ]
                                     }

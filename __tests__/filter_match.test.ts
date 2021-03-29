@@ -1,5 +1,6 @@
-import { getReward, getTokenDailyReward, parseFilter, propertiesToArray } from '../src/utils-functions'
+import { getMetadataFromOperation, getReward, getTokenDailyReward, parseFilter, propertiesToArray } from '../src/utils-functions'
 import { addressFromHex } from '../src/utils-tezos-keys'
+import contractQuest from './contract_quest.json'
 import block403915 from './block_examples/403915.json'
 import block65323 from './block_examples/65323.json'
 import block431941 from './block_examples/431941.json'
@@ -17,7 +18,7 @@ import block1340488 from './block_examples/1340488.json'
 
 import dexter from '../src/config/dexter'
 import quipuswap from '../src/config/quipuswap'
-import { getOperationInBlockByHash } from '../src/utils-rpc'
+import { getLedgerMeta, getOperationInBlockByHash } from '../src/utils-rpc'
 
 
 describe('test filter match', () => {
@@ -436,6 +437,16 @@ describe('test filter match', () => {
 
         const tokenId = getTokenDailyReward({ operations: operation })
         expect(tokenId).toBe('16')
+
+
+        // get the metadata
+        const contract: any = contractQuest
+        const ledgerMeta = getLedgerMeta(contract, operation)
+        expect(ledgerMeta.length).toBe(2)
+        expect(ledgerMeta[0].token_id).toBe('16')
+        expect(ledgerMeta[1].token_id).toBe('16')
+        expect(ledgerMeta[0].address).toBe('tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst')
+
 
     })
     it('test getOperationInBlockByHash', () => {

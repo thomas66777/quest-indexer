@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS "daily_reward" (
 	"operation_idx"	INTEGER NOT NULL,
 	"chain_id"	TEXT NOT NULL,
 	"hash"	TEXT NOT NULL,
+	"meta"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
