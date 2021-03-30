@@ -20,7 +20,9 @@ module.exports = {
         '@typescript-eslint/no-empty-function': 'off',
         'no-constant-condition': 'off',
         'no-prototype-builtins': 'off',
-        'quotes': ['warn', 'single'],
+        'quotes': ['warn', 'single', {
+            'allowTemplateLiterals': true
+        }],
         'semi': ['warn', 'never']
     }
 }

@@ -16,6 +16,7 @@ import { processAuction } from './special/auction'
 import { IBCDAuctionStorage, IBCDBigMapAuction } from './special/auctionInterfaceBigMap'
 import axios from 'axios'
 import { getLedgerMeta, RpcUtil } from './utils-rpc'
+import { JSONPath } from 'jsonpath-plus'
 
 export class TezosPoller {
     readonly chainId: string
@@ -74,31 +75,39 @@ export class TezosPoller {
     }
 
     async startScanning(): Promise<void> {
-        /* load the auction contract */
-        if (this.contractAuctionAddress) {
-            const tezosToolkit = new TezosToolkit(new RpcClient(this.rpcEndpoint, this.chainId))
-            const auctionSigner = this.db.prepare('select tezos_signer from game where tezos_contract_fa2 = :tezos_contract_fa2').pluck().get({ tezos_contract_fa2: this.contractAuctionAddress })
-            assert(auctionSigner, 'cannot find special auction contract in game table')
-            const arySk: string[] = JSON.parse(process.env.SIGNER_SK)
-            const idx = arySk.findIndex(sk => secretKeyToKeyPair(sk).pkh == auctionSigner)
+        try {
 
-            assert(idx !== -1, `cannot find the sk for the special auction contract ${auctionSigner}`)
-            const sk = arySk[idx]
-            const signer = new InMemorySigner(sk)
-            tezosToolkit.setProvider({ signer })
+            /* load the auction contract */
+            if (this.contractAuctionAddress) {
+                const tezosToolkit = new TezosToolkit(new RpcClient(this.rpcEndpoint, this.chainId))
+                const auctionSigner = this.db.prepare('select tezos_signer from game where tezos_contract_fa2 = :tezos_contract_fa2').pluck().get({ tezos_contract_fa2: this.contractAuctionAddress })
+                assert(auctionSigner, 'cannot find special auction contract in game table')
+                const arySk: string[] = JSON.parse(process.env.SIGNER_SK)
+                const idx = arySk.findIndex(sk => secretKeyToKeyPair(sk).pkh == auctionSigner)
 
-            this.contractAction = await tezosToolkit.contract.at(this.contractAuctionAddress)
+                assert(idx !== -1, `cannot find the sk for the special auction contract ${auctionSigner}`)
+                const sk = arySk[idx]
+                const signer = new InMemorySigner(sk)
+                tezosToolkit.setProvider({ signer })
+
+                this.contractAction = await tezosToolkit.contract.at(this.contractAuctionAddress)
+            }
+            /* end special logic */
+
+            // Load all the contracts
+            const aryContractFA2 = this.db.prepare<string[]>('select tezos_contract_fa2 from game').pluck().all()
+            for (const tezos_contract_fa2 of aryContractFA2) {
+                const contract = await this.rpcClient.getContract(tezos_contract_fa2)
+                this.mapContracts.set('tezos_contract_fa2', contract)
+            }
+
+            // init blockHeadLevel to be same as start block just in case of error in the loop
+            this.blockLevelHeader = await this.rpcClient.getBlockHeader()
+
+        } catch (error) {
+            console.error(new Date().toISOString(), error.message)
+            return
         }
-        /* end special logic */
-
-        // Load all the contracts
-        for (const tezos_contract_fa2 of this.db.prepare<string[]>('select tezos_contract_fa2 from game').pluck().get()) {
-            this.mapContracts.set('tezos_contract_fa2', await this.rpcClient.getContract(tezos_contract_fa2))
-        }
-
-        // init blockHeadLevel to be same as start block just in case of error in the loop
-        this.blockLevelHeader = await this.rpcClient.getBlockHeader()
-
         global['polling_counter']++
         while (true) {
             let blockLevel = this.blockLevelScan
@@ -332,8 +341,9 @@ export class TezosPoller {
             if (this.contractAction) {
                 const network = process.env.API_PREFIX
                 const urlPrefix = process.env.BETTER_CALL_DEV_ENDPOINT || 'https://better-call.dev/v1/'
-                const storage: IBCDAuctionStorage = (await axios.get(`${urlPrefix}contract/${network}/${this.contractAuctionAddress}/storage`)).data
-                const bigMapKey = storage.children.find(c => c.name == 'auctions').value
+                const storage: IBCDAuctionStorage[] = (await axios.get(`${urlPrefix}contract/${network}/${this.contractAuctionAddress}/storage`)).data
+                // const bigMapKey = storage[0].children.find(c => c.name == 'auctions').value
+                const bigMapKey = JSONPath({ path: `$..children[?(@.name == 'auctions')].value`, json: storage })[0]
                 const bigMapAction: IBCDBigMapAuction[] = (await axios.get(`${urlPrefix}bigmap/${network}/${bigMapKey}/keys`)).data
 
                 for (const { data } of bigMapAction) {
