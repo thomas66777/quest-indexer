@@ -96,7 +96,7 @@ router.get('/daily_reward/:game_id?/:pkh?', (req: Request, res: Response) => {
         where game_id = :game_id and (quest_id = :quest_id or :quest_id=0)
         order by reward, block_level desc
         `).all({ quest_id, game_id })
-        result.forEach(r => r.result = JSON.parse(r.meta))
+        result.forEach(r => r.meta = JSON.parse(r.meta))
 
         res.status(200).json(jsend.success(result))
     } catch (error) {
