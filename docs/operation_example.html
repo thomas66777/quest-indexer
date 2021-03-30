@@ -1,0 +1,532 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js rust">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Operation Example - Quest Indexer</title>
+        
+        
+
+
+        <!-- Custom HTML head -->
+        
+
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Explanation of the Tezos Quest Indexer.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        
+        <link rel="icon" href="favicon.svg">
+        
+        
+        <link rel="shortcut icon" href="favicon.png">
+        
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <link rel="stylesheet" href="css/print.css" media="print">
+        
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        
+        <link rel="stylesheet" href="fonts/fonts.css">
+        
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "rust";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Quest System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quest_indexer.html"><strong aria-hidden="true">1.1.</strong> Quest Indexer</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quest_operation_matching.html"><strong aria-hidden="true">1.1.1.</strong> Quest Operation Matching</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="block_450404.html"><strong aria-hidden="true">1.1.1.1.</strong> Block Example</a></li><li class="chapter-item expanded "><a href="reward_status.html"><strong aria-hidden="true">1.1.1.2.</strong> Reward Status</a></li></ol></li><li class="chapter-item expanded "><a href="quest_daily_reward.html"><strong aria-hidden="true">1.1.2.</strong> Daily Reward</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contract_quest.html"><strong aria-hidden="true">1.1.2.1.</strong> Contract Example</a></li><li class="chapter-item expanded "><a href="operation_example.html" class="active"><strong aria-hidden="true">1.1.2.2.</strong> Operation Example</a></li></ol></li><li class="chapter-item expanded "><a href="quest_criteria.html"><strong aria-hidden="true">1.1.3.</strong> Quest Criteria</a></li><li class="chapter-item expanded "><a href="quest_auction.html"><strong aria-hidden="true">1.1.4.</strong> Special Auction</a></li></ol></li><li class="chapter-item expanded "><a href="quest_rewarder.html"><strong aria-hidden="true">1.2.</strong> Quest Rewarder</a></li><li class="chapter-item expanded "><a href="quest_error_handling.html"><strong aria-hidden="true">1.3.</strong> Error Handling</a></li><li class="chapter-item expanded "><a href="quest_api.html"><strong aria-hidden="true">1.4.</strong> Swagger Api</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="developers.html"><strong aria-hidden="true">2.</strong> Developers</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="developers_dependencies.html"><strong aria-hidden="true">2.1.</strong> Dependencies</a></li><li class="chapter-item expanded "><a href="developers_build.html"><strong aria-hidden="true">2.2.</strong> Build</a></li><li class="chapter-item expanded "><a href="env_config.html"><strong aria-hidden="true">2.3.</strong> Environment</a></li><li class="chapter-item expanded "><a href="developers_deploy.html"><strong aria-hidden="true">2.4.</strong> Deploy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="developers_deploy_node.html"><strong aria-hidden="true">2.4.1.</strong> node</a></li><li class="chapter-item expanded "><a href="developers_deploy_systemd.html"><strong aria-hidden="true">2.4.2.</strong> systemd</a></li></ol></li><li class="chapter-item expanded "><a href="database.html"><strong aria-hidden="true">2.5.</strong> Database</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Quest Indexer</h1>
+
+                    <div class="right-buttons">
+                        
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="operation-metadata"><a class="header" href="#operation-metadata">Operation Metadata</a></h2>
+<p>Below is the <code>json</code> returned from the <code>RPC</code> endpoint: <code>chains/main/blocks/106434</code> on edo2net.
+This is filtered to only show operation <code>op62w7HB6YYgedeuH8p16KGeWicJaKHuQKssDhjdfUGzhvM27tb</code></p>
+<pre><code class="language-json">{
+...
+    [
+      {
+        &quot;protocol&quot;: &quot;PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA&quot;,
+        &quot;chain_id&quot;: &quot;NetXSgo1ZT2DRUG&quot;,
+        &quot;hash&quot;: &quot;op62w7HB6YYgedeuH8p16KGeWicJaKHuQKssDhjdfUGzhvM27tb&quot;,
+        &quot;branch&quot;: &quot;BLHXgvaT6LRMJRrQXvZipWVeBXRTgYfzNBXHzZruQnjuqj2Y9ru&quot;,
+        &quot;contents&quot;: [
+          {
+            &quot;kind&quot;: &quot;reveal&quot;,
+            &quot;source&quot;: &quot;tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst&quot;,
+            &quot;fee&quot;: &quot;0&quot;,
+            &quot;counter&quot;: &quot;167931&quot;,
+            &quot;gas_limit&quot;: &quot;1000&quot;,
+            &quot;storage_limit&quot;: &quot;0&quot;,
+            &quot;public_key&quot;: &quot;edpkv5JWFj32McSbdVybgUpbYk3VKptDZMQzJcqjL1Mq9GojxML7JJ&quot;,
+            &quot;metadata&quot;: {
+              &quot;balance_updates&quot;: [],
+              &quot;operation_result&quot;: {
+                &quot;status&quot;: &quot;applied&quot;,
+                &quot;consumed_gas&quot;: &quot;1000&quot;,
+                &quot;consumed_milligas&quot;: &quot;1000000&quot;
+              }
+            }
+          },
+          {
+            &quot;kind&quot;: &quot;transaction&quot;,
+            &quot;source&quot;: &quot;tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst&quot;,
+            &quot;fee&quot;: &quot;6448&quot;,
+            &quot;counter&quot;: &quot;167932&quot;,
+            &quot;gas_limit&quot;: &quot;60000&quot;,
+            &quot;storage_limit&quot;: &quot;150&quot;,
+            &quot;amount&quot;: &quot;0&quot;,
+            &quot;destination&quot;: &quot;KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ&quot;,
+            &quot;parameters&quot;: {
+              &quot;entrypoint&quot;: &quot;reward&quot;,
+              &quot;value&quot;: {
+                &quot;prim&quot;: &quot;Unit&quot;
+              }
+            },
+            &quot;metadata&quot;: {
+              &quot;balance_updates&quot;: [
+                {
+                  &quot;kind&quot;: &quot;contract&quot;,
+                  &quot;contract&quot;: &quot;tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst&quot;,
+                  &quot;change&quot;: &quot;-6448&quot;
+                },
+                {
+                  &quot;kind&quot;: &quot;freezer&quot;,
+                  &quot;category&quot;: &quot;fees&quot;,
+                  &quot;delegate&quot;: &quot;tz1cXeGHP8Urj2pQRwpAkCdPGbCdqFUPsQwU&quot;,
+                  &quot;cycle&quot;: 51,
+                  &quot;change&quot;: &quot;6448&quot;
+                }
+              ],
+              &quot;operation_result&quot;: {
+                &quot;status&quot;: &quot;applied&quot;,
+                &quot;storage&quot;: {
+                  &quot;prim&quot;: &quot;Pair&quot;,
+                  &quot;args&quot;: [
+                    [
+                      {
+                        &quot;prim&quot;: &quot;Pair&quot;,
+                        &quot;args&quot;: [
+                          {
+                            &quot;prim&quot;: &quot;Pair&quot;,
+                            &quot;args&quot;: [
+                              {
+                                &quot;bytes&quot;: &quot;00009c8671920e9b4ac694058b5a69fedf3dede6ed5a&quot;
+                              },
+                              {
+                                &quot;prim&quot;: &quot;False&quot;
+                              }
+                            ]
+                          },
+                          {
+                            &quot;prim&quot;: &quot;None&quot;
+                          }
+                        ]
+                      },
+                      {
+                        &quot;prim&quot;: &quot;Pair&quot;,
+                        &quot;args&quot;: [
+                          {
+                            &quot;int&quot;: &quot;38166&quot;
+                          },
+                          {
+                            &quot;int&quot;: &quot;38167&quot;
+                          }
+                        ]
+                      },
+                      {
+                        &quot;int&quot;: &quot;38168&quot;
+                      },
+                      {
+                        &quot;int&quot;: &quot;38169&quot;
+                      }
+                    ],
+                    {
+                      &quot;prim&quot;: &quot;Pair&quot;,
+                      &quot;args&quot;: [
+                        {
+                          &quot;int&quot;: &quot;38170&quot;
+                        },
+                        {
+                          &quot;int&quot;: &quot;38171&quot;
+                        }
+                      ]
+                    }
+                  ]
+                },
+                &quot;big_map_diff&quot;: [
+                  {
+                    &quot;action&quot;: &quot;update&quot;,
+                    &quot;big_map&quot;: &quot;38171&quot;,
+                    &quot;key_hash&quot;: &quot;exprtzDnCQrxKrWA8Cwd1XLDy8KrZWx8e3JYq1Wqcu5aFRBDUgzbBP&quot;,
+                    &quot;key&quot;: {
+                      &quot;bytes&quot;: &quot;00007c01f0b92731849bd501249bf4a30d48240e21e8&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;prim&quot;: &quot;Pair&quot;,
+                      &quot;args&quot;: [
+                        {
+                          &quot;int&quot;: &quot;1616393129&quot;
+                        },
+                        {
+                          &quot;int&quot;: &quot;0&quot;
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    &quot;action&quot;: &quot;update&quot;,
+                    &quot;big_map&quot;: &quot;38166&quot;,
+                    &quot;key_hash&quot;: &quot;expruY8oYiagXWP11Z4Air5BKpqYcwErCxkQQpzKbnFey4Pkig7eN2&quot;,
+                    &quot;key&quot;: {
+                      &quot;prim&quot;: &quot;Pair&quot;,
+                      &quot;args&quot;: [
+                        {
+                          &quot;bytes&quot;: &quot;00007c01f0b92731849bd501249bf4a30d48240e21e8&quot;
+                        },
+                        {
+                          &quot;int&quot;: &quot;16&quot;
+                        }
+                      ]
+                    },
+                    &quot;value&quot;: {
+                      &quot;int&quot;: &quot;1&quot;
+                    }
+                  },
+                  {
+                    &quot;action&quot;: &quot;update&quot;,
+                    &quot;big_map&quot;: &quot;38166&quot;,
+                    &quot;key_hash&quot;: &quot;expru3SULaK5xPwNKyhevUwzYZabWMbNjAekNxsrzn2qLk4zAZ98ZN&quot;,
+                    &quot;key&quot;: {
+                      &quot;prim&quot;: &quot;Pair&quot;,
+                      &quot;args&quot;: [
+                        {
+                          &quot;bytes&quot;: &quot;00009c8671920e9b4ac694058b5a69fedf3dede6ed5a&quot;
+                        },
+                        {
+                          &quot;int&quot;: &quot;16&quot;
+                        }
+                      ]
+                    },
+                    &quot;value&quot;: {
+                      &quot;int&quot;: &quot;49999&quot;
+                    }
+                  }
+                ],
+                &quot;balance_updates&quot;: [
+                  {
+                    &quot;kind&quot;: &quot;contract&quot;,
+                    &quot;contract&quot;: &quot;tz1Wwioir9n34AL3wDiPE2fP7KvjPgL7HNst&quot;,
+                    &quot;change&quot;: &quot;-35500&quot;
+                  }
+                ],
+                &quot;consumed_gas&quot;: &quot;33399&quot;,
+                &quot;consumed_milligas&quot;: &quot;33398290&quot;,
+                &quot;storage_size&quot;: &quot;16793&quot;,
+                &quot;paid_storage_size_diff&quot;: &quot;142&quot;,
+                &quot;lazy_storage_diff&quot;: [
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38171&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: [
+                        {
+                          &quot;key_hash&quot;: &quot;exprtzDnCQrxKrWA8Cwd1XLDy8KrZWx8e3JYq1Wqcu5aFRBDUgzbBP&quot;,
+                          &quot;key&quot;: {
+                            &quot;bytes&quot;: &quot;00007c01f0b92731849bd501249bf4a30d48240e21e8&quot;
+                          },
+                          &quot;value&quot;: {
+                            &quot;prim&quot;: &quot;Pair&quot;,
+                            &quot;args&quot;: [
+                              {
+                                &quot;int&quot;: &quot;1616393129&quot;
+                              },
+                              {
+                                &quot;int&quot;: &quot;0&quot;
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38170&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: []
+                    }
+                  },
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38169&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: []
+                    }
+                  },
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38168&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: []
+                    }
+                  },
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38167&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: []
+                    }
+                  },
+                  {
+                    &quot;kind&quot;: &quot;big_map&quot;,
+                    &quot;id&quot;: &quot;38166&quot;,
+                    &quot;diff&quot;: {
+                      &quot;action&quot;: &quot;update&quot;,
+                      &quot;updates&quot;: [
+                        {
+                          &quot;key_hash&quot;: &quot;expru3SULaK5xPwNKyhevUwzYZabWMbNjAekNxsrzn2qLk4zAZ98ZN&quot;,
+                          &quot;key&quot;: {
+                            &quot;prim&quot;: &quot;Pair&quot;,
+                            &quot;args&quot;: [
+                              {
+                                &quot;bytes&quot;: &quot;00009c8671920e9b4ac694058b5a69fedf3dede6ed5a&quot;
+                              },
+                              {
+                                &quot;int&quot;: &quot;16&quot;
+                              }
+                            ]
+                          },
+                          &quot;value&quot;: {
+                            &quot;int&quot;: &quot;49999&quot;
+                          }
+                        },
+                        {
+                          &quot;key_hash&quot;: &quot;expruY8oYiagXWP11Z4Air5BKpqYcwErCxkQQpzKbnFey4Pkig7eN2&quot;,
+                          &quot;key&quot;: {
+                            &quot;prim&quot;: &quot;Pair&quot;,
+                            &quot;args&quot;: [
+                              {
+                                &quot;bytes&quot;: &quot;00007c01f0b92731849bd501249bf4a30d48240e21e8&quot;
+                              },
+                              {
+                                &quot;int&quot;: &quot;16&quot;
+                              }
+                            ]
+                          },
+                          &quot;value&quot;: {
+                            &quot;int&quot;: &quot;1&quot;
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        &quot;signature&quot;: &quot;sigWRnJdY8YyPqWbyJ4av27SimJ3KFXkGgHUhLB9iEHctN4CrnpxSRHogVoRwKztjTCajb7KFQkUgWjTHCvpTab5moPPqvCE&quot;
+      }
+    ]
+...
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="contract_quest.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="quest_criteria.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="contract_quest.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="quest_criteria.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
