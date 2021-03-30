@@ -98,7 +98,7 @@ export class TezosPoller {
             const aryContractFA2 = this.db.prepare<string[]>('select tezos_contract_fa2 from game').pluck().all()
             for (const tezos_contract_fa2 of aryContractFA2) {
                 const contract = await this.rpcClient.getContract(tezos_contract_fa2)
-                this.mapContracts.set('tezos_contract_fa2', contract)
+                this.mapContracts.set(tezos_contract_fa2, contract)
             }
 
             // init blockHeadLevel to be same as start block just in case of error in the loop
@@ -192,7 +192,8 @@ export class TezosPoller {
                     } else if (filters[j].filter_type == 'DAILY') {
                         console.log('reward daily', reward, filters[j].name)
                         const quest_id = getQuestId(game_id, reward)
-                        const meta = getLedgerMeta(this.mapContracts.get(filters[j].filter_id), operation)
+                        const contractFA2 = this.mapContracts.get(filters[j].filter_id)
+                        const meta = getLedgerMeta(contractFA2, operation)
                         const token_id = meta.find(m => m.address == reward)?.token_id || getTokenDailyReward({ operations: operation })
                         batchTrxs.push({
                             sql: `
