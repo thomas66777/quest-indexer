@@ -149,24 +149,40 @@ export class TezosPoller {
 
                 // Load daily reward filters
                 const filtersDailyReward = []
+                const filtersClaimReward = []
                 for (const contractFA2 of this.db.prepare('select tezos_contract_fa2 from game').pluck().all()) {
+                    const game_id = this.db.prepare('select game_id from game where tezos_contract_fa2 = :tezos_contract_fa2').pluck().get({ tezos_contract_fa2: contractFA2 })
+                    const criteria = {
+                        'operations:chain_id': process.env.CHAIN_ID,
+                        'operations:contents:kind': 'transaction',
+                        'operations:contents:amount': { 'eval': 'value == 0' },
+                        'operations:contents:destination': contractFA2,
+                    }
                     filtersDailyReward.push({
                         filter_id: contractFA2,
-                        game_id: this.db.prepare('select game_id from game where tezos_contract_fa2 = :tezos_contract_fa2').pluck().get({ tezos_contract_fa2: contractFA2 }),
+                        game_id,
                         filter_type: 'DAILY',
                         name: 'daily reward',
                         reward: 'operations:contents:0:source',
                         criteria: {
-                            'operations:chain_id': process.env.CHAIN_ID,
-                            'operations:contents:kind': 'transaction',
-                            'operations:contents:amount': { 'eval': 'value == 0' },
+                            ...criteria,
                             'operations:contents:parameters:entrypoint': 'reward',
-                            'operations:contents:destination': contractFA2,
+                        }
+                    })
+                    filtersClaimReward.push({
+                        filter_id: contractFA2,
+                        game_id,
+                        filter_type: 'CLAIM',
+                        name: 'claim reward',
+                        reward: 'operations:contents:0:source',
+                        criteria: {
+                            ...criteria,
+                            'operations:contents:parameters:entrypoint': 'claim',
                         }
                     })
                 }
 
-                const filters = filtersOperation.concat(filtersDailyReward)
+                const filters = filtersOperation.concat(filtersDailyReward).concat(filtersClaimReward)
                 // dynamically apply all filters
                 const aryFilterMatches = parseFilter(block, filters)
                 for (const { i, j, k } of aryFilterMatches) {
@@ -204,6 +220,29 @@ export class TezosPoller {
                                 game_id: game_id,
                                 quest_id: quest_id,
                                 token_id: token_id,
+                                reward_status: REWARD_STATUS.CONFIRMED,
+                                reward: reward,
+                                time_stamp: block.header.timestamp,
+                                block_level: block.header.level,
+                                operation_idx: i,
+                                chain_id: operation.chain_id,
+                                hash: operation.hash,
+                                meta: JSON.stringify(meta)
+                            }
+                        })
+                    } else if (filters[j].filter_type == 'CLAIM') {
+                        console.log('reward claim', reward, filters[j].name)
+                        const quest_id = getQuestId(game_id, reward)
+                        const contractFA2 = this.mapContracts.get(filters[j].filter_id)
+                        const meta = getLedgerMeta(contractFA2, operation)
+                        batchTrxs.push({
+                            sql: `
+                            insert or ignore into claim_reward (game_id,quest_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
+                            values (:game_id,:quest_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
+                            `,
+                            params: {
+                                game_id: game_id,
+                                quest_id: quest_id,
                                 reward_status: REWARD_STATUS.CONFIRMED,
                                 reward: reward,
                                 time_stamp: block.header.timestamp,

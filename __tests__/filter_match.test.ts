@@ -1,8 +1,8 @@
 import { getMetadataFromOperation, getReward, getTokenDailyReward, parseFilter, propertiesToArray } from '../src/utils-functions'
 import { addressFromHex } from '../src/utils-tezos-keys'
 import contractQuest from './contract_quest.json'
-import block403915 from './block_examples/403915.json'
 import block65323 from './block_examples/65323.json'
+import block403915 from './block_examples/403915.json'
 import block431941 from './block_examples/431941.json'
 import block372547 from './block_examples/372547.json'
 import block435077 from './block_examples/435077.json'
@@ -12,6 +12,7 @@ import block441012 from './block_examples/441012.json'
 import block450404 from './block_examples/450404.json'
 
 import block106434 from './block_examples/106434.json'
+import block117213 from './block_examples/117213.json'
 
 import block1340382 from './block_examples/1340382.json'
 import block1340488 from './block_examples/1340488.json'
@@ -400,6 +401,47 @@ describe('test filter match', () => {
 
         const tokenId = getTokenDailyReward({ operations: operation })
         expect(tokenId).toBe('7')
+
+    })
+
+    it('match claim reward', () => {
+        // https://better-call.dev/delphinet/KT1Tu6yYQDfvMXa1miDfR4HUoL4PJ5c17MHx/operations
+        const filter_1 = [
+            {
+                name: 'claim reward',
+                description: 'Call contract for Claim reward',
+                reward: 'operations:contents:0:source',
+                criteria: {
+                    'operations:chain_id': 'NetXSgo1ZT2DRUG',
+                    'operations:contents:kind': 'transaction',
+                    'operations:contents:amount': {
+                        eval: 'value == 0'
+                    },
+                    'operations:contents:destination': 'KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ',
+                    'operations:contents:parameters:entrypoint': 'claim',
+                }
+            }
+        ]
+
+        const block: any = block117213
+        const aryFilterMatches = parseFilter(block, filter_1)
+        expect(aryFilterMatches.length).toBe(1)
+
+        const { i, j, k } = aryFilterMatches[0]
+        const operation = block.operations[i][k]
+        expect(operation.hash).toBe('opRc5sCGDjzWexewqXrMyz11Zy5EHtSTHpaD1qYYinf9DeHDfyF')
+
+        // get the reward account
+        const reward = getReward({ operations: operation }, filter_1[0].reward)
+        expect(reward).toBe('tz1PnnNjMKB4EDDejuznjNrjwVxh54qiuknS')
+
+        // get the metadata
+        const contract: any = contractQuest
+        const ledgerMeta = getLedgerMeta(contract, operation)
+        expect(ledgerMeta.length).toBe(25)
+        for (const ledger of ledgerMeta) {
+            expect(ledger.address).toBe('tz1PnnNjMKB4EDDejuznjNrjwVxh54qiuknS')
+        }
 
     })
 

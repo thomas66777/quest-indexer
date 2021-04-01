@@ -6,19 +6,42 @@ const args = argv.option([
         type: 'string',
         description: 'where is the .env located',
         example: '--path-env=_dev.env'
-    }, {
+    },
+    {
         name: 'block-start',
         short: 'b',
         type: 'string',
         description: 'block level to start indexing',
         example: '--block-start=500000'
-    }, {
+    },
+    {
         name: 'db-schema',
         short: 'db',
         type: 'string',
         description: 'refresh the db schema if changes made to ./scripts/db_schema.sql',
         example: '--dbschema'
-    }
+    },
+    {
+        name: 'skip-poller',
+        short: 'db',
+        type: 'string',
+        description: 'No polling',
+        example: '--skip-poller'
+    },
+    {
+        name: 'skip-injector',
+        short: 'db',
+        type: 'string',
+        description: 'No injecting',
+        example: '--skip-injector'
+    },
+    {
+        name: 'skip-api',
+        short: 'db',
+        type: 'string',
+        description: 'No API',
+        example: '--skip-api'
+    },
 ]).run()
 
 const envPath = args.options['path-env'] || '.env'
@@ -44,6 +67,7 @@ import { secretKeyToKeyPair } from './src/utils-tezos-keys'
 import { InMemorySigner } from '@taquito/signer'
 import { TezosBroadcaster as TezosInjector } from './src/tezos-broadcaster'
 import deasync from 'deasync'
+import { getLedgerMeta } from './src/utils-rpc'
 
 global['polling_counter'] = 0
 process.on('SIGINT', () => {
@@ -92,18 +116,18 @@ async function main() {
     // const rpcClient = new RpcClient('https://rpc.tzbeta.net:443', 'NetXdQprcVkpaWU')
     // const rpcClient = new RpcClient('https://rpctest.tzbeta.net', 'NetXm8tYqnMWky1')
     // const rpcClient = new RpcClient('https://edonet.smartpy.io', 'NetXSgo1ZT2DRUG')
-    // const block = await rpcClient.getBlock({ block: '114969' })
-    // // console.log('rpc url:', rpcClient.getRpcUrl())
+    // const block = await rpcClient.getBlock({ block: '117213' })
+    // console.log('rpc url:', rpcClient.getRpcUrl())
     // for (const ops of block.operations) {
     //     for (const blockOperation of <any>ops) {
-    //         if (blockOperation?.hash == 'ooji3pGiTNQRBm468wVNmDsE48AKnLy67i1RWXZTcbUqs7f263h') {
+    //         if (blockOperation?.hash == 'opRc5sCGDjzWexewqXrMyz11Zy5EHtSTHpaD1qYYinf9DeHDfyF') {
     //             const meta = getMetadataFromOperation(blockOperation)
     //             console.log(meta)
     //             const opStatus = getMetadataFromOperation(blockOperation)?.operation_result?.status
     //             const opErrors = JSON.stringify(getMetadataFromOperation(blockOperation)?.operation_result?.errors) || null
     //             console.log(meta)
     //             const contract = await rpcClient.getContract('KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ')
-    //             getTokenDailyReward(contract, meta)
+    //             getLedgerMeta(contract, blockOperation)
     //         }
     //     }
     // }
@@ -155,9 +179,13 @@ async function main() {
     const dbStatus = db.prepare('select * from indexer_status').get()
     // const db = LevelUp(LevelDOWN(process.env.DB_PATH || './db'))
     // const dbStatus = await getOrNull(db, 'status')
-    const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
-    const tezosInjector = new TezosInjector(db, { ...params })
 
+    if (!args.options['skip-poller']) {
+        const tezosPoller = new TezosPoller(db, { ...params }, dbStatus)
+    }
+    if (!args.options['skip-injector']) {
+        const tezosInjector = new TezosInjector(db, { ...params })
+    }
 
     // Get the contract
     // const Tezos = new TezosToolkit(params.rpcEndpoint)
@@ -171,7 +199,9 @@ async function main() {
     //     const signer = new InMemorySigner(params.sk)
     //     this.Tezos.setProvider({ signer })
     // }
-    const app = new AppServer(__dirname, db)
+    if (!args.options['skip-api']) {
+        const app = new AppServer(__dirname, db)
+    }
 }
 (() => {
     main()

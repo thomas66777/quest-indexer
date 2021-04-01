@@ -68,6 +68,21 @@ CREATE TABLE IF NOT EXISTS "daily_reward" (
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
 
+CREATE TABLE IF NOT EXISTS "claim_reward" (
+	"id"	INTEGER,
+	"game_id"	INTEGER NOT NULL,
+	"quest_id"	INTEGER NOT NULL,
+	"reward"	TEXT NOT NULL,
+	"time_stamp"	TEXT NOT NULL,
+	"block_level"	INTEGER NOT NULL,
+	"operation_idx"	INTEGER NOT NULL,
+	"chain_id"	TEXT NOT NULL,
+	"hash"	TEXT NOT NULL,
+	"meta"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
+);
+
 -- CREATE TABLE IF NOT EXISTS "operation_reward" (
 -- 	"reward_id"	INTEGER NOT NULL,
 -- 	"game_id"	INTEGER NOT NULL,
@@ -139,6 +154,9 @@ CREATE INDEX IF NOT EXISTS "indexer_game_quest_IDX" ON "indexer_reward" (
 );
 
 CREATE INDEX IF NOT EXISTS "daily_reward_quest_IDX" ON "daily_reward" (
+	"quest_id"
+);
+CREATE INDEX IF NOT EXISTS "claim_reward_quest_IDX" ON "claim_reward" (
 	"quest_id"
 );
 

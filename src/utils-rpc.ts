@@ -4,6 +4,7 @@ import assert from 'assert'
 import { getMetadataFromOperation, parseFilter, sendSlackMessage } from './utils-functions'
 import { Schema } from '@taquito/michelson-encoder'
 import { JSONPath } from 'jsonpath-plus'
+import { addressFromHex } from './utils-tezos-keys'
 
 // Doing this becasue the taqito rpc package does not handle http errors
 export class RpcUtil {
@@ -100,17 +101,26 @@ export function getLedgerMeta(contract: ContractResponse, operation: OperationEn
 
         // Iterate through the Ledger BigMap Diffs and get the values
         const ledgerSchema = new Schema(ledgerMichelson)
-        const bigMapDiffDecoded = ledgerSchema.ExecuteOnBigMapDiff(bigMapLedgerDiffs)
         const ledgerBigMapDiffs: IBigMapLedger[] = []
-        for (const entry of bigMapDiffDecoded.entries()) {
-            // const keys = Object.keys(entry[0]).map(k => Number(k))
-            const address = entry[0]['0'].toString()
-            const token_id = entry[0]['1'].toString()
-            const value = entry[1].toString()
+        for (const bigMapDiff of bigMapLedgerDiffs) {
+            const value = (<any>bigMapDiff)?.value?.int || null
+            const pair = bigMapDiff.key['args']
             ledgerBigMapDiffs.push({
-                address, token_id, value,
+                address: addressFromHex(pair[0].bytes),
+                token_id: pair[1].int,
+                value
             })
         }
+        // const bigMapDiffDecoded = ledgerSchema.ExecuteOnBigMapDiff(bigMapLedgerDiffs)
+        // for (const entry of bigMapDiffDecoded.entries()) {
+        //     // const keys = Object.keys(entry[0]).map(k => Number(k))
+        //     const address = entry[0]['0'].toString()
+        //     const token_id = entry[0]['1'].toString()
+        //     const value = entry[1].toString()
+        //     ledgerBigMapDiffs.push({
+        //         address, token_id, value,
+        //     })
+        // }
         // console.log('ledger => \n', JSON.stringify(entriesPairs, null, 2))
         return ledgerBigMapDiffs
     } catch (error) {

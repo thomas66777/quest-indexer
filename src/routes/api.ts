@@ -103,6 +103,28 @@ router.get('/daily_reward/:game_id?/:pkh?', (req: Request, res: Response) => {
         res.status(400).json(jsend.error(error))
     }
 })
+router.get('/claim_reward/:game_id?/:pkh?', (req: Request, res: Response) => {
+    try {
+        const game_id = <string>req.query.game_id || req.params.game_id
+        const pkh = <string>req.query.pkh || req.params.pkh || ''
+        assert(game_id, 'missing required paramaters')
+
+        const quest_id = pkh ? Number(getQuestId(game_id, pkh)) : 0
+
+        const db: Database = req.app.get('db')
+        const result = db.prepare(`
+        select * 
+        from claim_reward 
+        where game_id = :game_id and (quest_id = :quest_id or :quest_id=0)
+        order by reward, block_level desc
+        `).all({ quest_id, game_id })
+        result.forEach(r => r.meta = JSON.parse(r.meta))
+
+        res.status(200).json(jsend.success(result))
+    } catch (error) {
+        res.status(400).json(jsend.error(error))
+    }
+})
 router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
     try {
         const game_id = <string>req.query.game_id || req.params.game_id

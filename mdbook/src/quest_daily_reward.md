@@ -38,16 +38,14 @@ export function getLedgerMeta(contract: ContractResponse, operation: OperationEn
     const bigMapLedgerDiffs = meta.operation_result.big_map_diff.filter((bm: any) => bm?.big_map == ledgerPtr)
 
     // Iterate through the Ledger BigMap Diffs and get the values
-    const ledgerSchema = new Schema(ledgerMichelson)
-    const bigMapDiffDecoded = ledgerSchema.ExecuteOnBigMapDiff(bigMapLedgerDiffs)
     const ledgerBigMapDiffs: IBigMapLedger[] = []
-    for (const entry of bigMapDiffDecoded.entries()) {
-        // const keys = Object.keys(entry[0]).map(k => Number(k))
-        const address = entry[0]['0'].toString()
-        const token_id = entry[0]['1'].toString()
-        const value = entry[1].toString()
+    for (const bigMapDiff of bigMapLedgerDiffs) {
+        const value = (<any>bigMapDiff)?.value?.int || null
+        const pair = bigMapDiff.key['args']
         ledgerBigMapDiffs.push({
-            address, token_id, value,
+            address: addressFromHex(pair[0].bytes),
+            token_id: pair[1].int,
+            value
         })
     }
     // console.log('ledger => \n', JSON.stringify(entriesPairs, null, 2))
