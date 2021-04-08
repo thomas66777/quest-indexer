@@ -72,7 +72,7 @@ export function getQuestId(game_id: string | number, tezosAccount: string): stri
 
 export function getRngTokenFromOperationHash(db: Database, hash: string, game_id: number): number {
     const rgnHash = crypto.createHash('sha256').update(hash, 'utf8').digest()
-    const aryTokenIds: number[] = db.prepare('select token_id from game_tokens where game_id = :game_id').pluck().all({ game_id })
+    const aryTokenIds: number[] = db.prepare('select token_id from game_tokens where game_id = :game_id order by token_id asc').pluck().all({ game_id })
     const rngToken = aryTokenIds[rngFromHash(rgnHash, aryTokenIds.length)]
     return rngToken
 }

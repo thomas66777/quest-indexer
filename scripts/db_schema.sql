@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS "operation_filter" (
 CREATE TABLE IF NOT EXISTS "daily_reward" (
 	"id"	INTEGER,
 	"game_id"	INTEGER NOT NULL,
-	"quest_id"	INTEGER NOT NULL,
+	"reward_hash_id"	INTEGER NOT NULL,
 	"token_id"	INTEGER NULL,
 	"reward"	TEXT NOT NULL,
 	"time_stamp"	TEXT NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "daily_reward" (
 CREATE TABLE IF NOT EXISTS "claim_reward" (
 	"id"	INTEGER,
 	"game_id"	INTEGER NOT NULL,
-	"quest_id"	INTEGER NOT NULL,
+	"reward_hash_id"	INTEGER NOT NULL,
 	"reward"	TEXT NOT NULL,
 	"time_stamp"	TEXT NOT NULL,
 	"block_level"	INTEGER NOT NULL,
@@ -83,23 +83,10 @@ CREATE TABLE IF NOT EXISTS "claim_reward" (
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
 
--- CREATE TABLE IF NOT EXISTS "operation_reward" (
--- 	"reward_id"	INTEGER NOT NULL,
--- 	"game_id"	INTEGER NOT NULL,
--- 	"name"	text NOT NULL,
--- 	"description"	text NOT NULL,
--- 	"destination"	text NOT NULL,
--- 	"token_id"	text NOT NULL,
--- 	"criteria"	text NOT NULL,
--- 	UNIQUE("game_id","name"),
--- 	PRIMARY KEY("reward_id" AUTOINCREMENT),
--- 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
--- );
-
 CREATE TABLE IF NOT EXISTS "indexer_reward" (
 	"id"	INTEGER,
 	"game_id"	INTEGER NOT NULL,
-	"quest_id"	INTEGER NOT NULL,
+	"reward_hash_id"	INTEGER NOT NULL,
 	"token_id"	INTEGER NOT NULL,
 	"reward_status"	INTEGER NOT NULL,
 	"reward_account"	TEXT NOT NULL,
@@ -117,7 +104,7 @@ CREATE TABLE IF NOT EXISTS "indexer_reward" (
 	"reward_block_status"	TEXT,
 	"reward_block_errors"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT),
-	UNIQUE("quest_id","filter_id"), -- makes sure that only one reward per user per game
+	UNIQUE("reward_hash_id","filter_id"), -- makes sure that only one reward per user per game
 	-- UNIQUE("reward_hash"), -- for now unique, only one trx per reward so it is easier to join back together
 	FOREIGN KEY("filter_id") REFERENCES "operation_filter"("filter_id"),
 	FOREIGN KEY("reward_status") REFERENCES "reward_status"("status_id"),
@@ -149,15 +136,15 @@ CREATE INDEX IF NOT EXISTS "indexer_reward_status_IDX" ON "indexer_reward" (
 CREATE INDEX IF NOT EXISTS "indexer_game_reward_IDX" ON "indexer_reward" (
 	"game_id", "reward_account"
 );
-CREATE INDEX IF NOT EXISTS "indexer_game_quest_IDX" ON "indexer_reward" (
-	"game_id", "quest_id"
+CREATE INDEX IF NOT EXISTS "indexer_game_reward_hash_idX" ON "indexer_reward" (
+	"game_id", "reward_hash_id"
 );
 
-CREATE INDEX IF NOT EXISTS "daily_reward_quest_IDX" ON "daily_reward" (
-	"quest_id"
+CREATE INDEX IF NOT EXISTS "daily_reward_reward_hash_idX" ON "daily_reward" (
+	"reward_hash_id"
 );
-CREATE INDEX IF NOT EXISTS "claim_reward_quest_IDX" ON "claim_reward" (
-	"quest_id"
+CREATE INDEX IF NOT EXISTS "claim_reward_reward_hash_idX" ON "claim_reward" (
+	"reward_hash_id"
 );
 
 

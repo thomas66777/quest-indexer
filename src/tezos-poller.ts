@@ -207,18 +207,18 @@ export class TezosPoller {
                         }
                     } else if (filters[j].filter_type == 'DAILY') {
                         console.log('reward daily', reward, filters[j].name)
-                        const quest_id = getQuestId(game_id, reward)
+                        const reward_hash_id = getQuestId(game_id, reward)
                         const contractFA2 = this.mapContracts.get(filters[j].filter_id)
                         const meta = getLedgerMeta(contractFA2, operation)
                         const token_id = meta.find(m => m.address == reward)?.token_id || getTokenDailyReward({ operations: operation })
                         batchTrxs.push({
                             sql: `
-                            insert or ignore into daily_reward (game_id,quest_id,token_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
-                            values (:game_id,:quest_id,:token_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
+                            insert or ignore into daily_reward (game_id,reward_hash_id,token_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
+                            values (:game_id,:reward_hash_id,:token_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
                             `,
                             params: {
                                 game_id: game_id,
-                                quest_id: quest_id,
+                                reward_hash_id: reward_hash_id,
                                 token_id: token_id,
                                 reward_status: REWARD_STATUS.CONFIRMED,
                                 reward: reward,
@@ -232,17 +232,17 @@ export class TezosPoller {
                         })
                     } else if (filters[j].filter_type == 'CLAIM') {
                         console.log('reward claim', reward, filters[j].name)
-                        const quest_id = getQuestId(game_id, reward)
+                        const reward_hash_id = getQuestId(game_id, reward)
                         const contractFA2 = this.mapContracts.get(filters[j].filter_id)
                         const meta = getLedgerMeta(contractFA2, operation)
                         batchTrxs.push({
                             sql: `
-                            insert or ignore into claim_reward (game_id,quest_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
-                            values (:game_id,:quest_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
+                            insert or ignore into claim_reward (game_id,reward_hash_id,reward,time_stamp,block_level,operation_idx,chain_id,hash,meta)
+                            values (:game_id,:reward_hash_id,:reward,:time_stamp,:block_level,:operation_idx,:chain_id,:hash,:meta)
                             `,
                             params: {
                                 game_id: game_id,
-                                quest_id: quest_id,
+                                reward_hash_id: reward_hash_id,
                                 reward_status: REWARD_STATUS.CONFIRMED,
                                 reward: reward,
                                 time_stamp: block.header.timestamp,
@@ -255,9 +255,9 @@ export class TezosPoller {
                         })
                     } else {
                         // console.log('reward operation', reward, filters[j].name)
-                        const quest_id = getQuestId(game_id, reward)
+                        const reward_hash_id = getQuestId(game_id, reward)
                         // get an rng from the operation signature plus so that it is totally deterministic
-                        const rngToken = getRngTokenFromOperationHash(this.db, `${operation.hash}${block.header.level}${quest_id}`, game_id)
+                        const rngToken = getRngTokenFromOperationHash(this.db, `${operation.hash}${block.header.level}${reward_hash_id}`, game_id)
                         if (!rngToken) {
                             console.error(new Date().toISOString(), `cannot reward game_id: ${game_id} ${operation.hash} as no tokens are configured`)
                             continue
@@ -265,14 +265,14 @@ export class TezosPoller {
                         // Can only have one game_id and filter_id combination
                         batchTrxs.push({
                             sql: `
-                            insert or ignore into indexer_reward (game_id, quest_id, token_id, reward_status, reward_account, filter_id, time_stamp, block_level, operation_idx, chain_id, hash)
-                            select :game_id, :quest_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash
-                            where exists (select 1 from daily_reward where quest_id = :quest_id)
+                            insert or ignore into indexer_reward (game_id, reward_hash_id, token_id, reward_status, reward_account, filter_id, time_stamp, block_level, operation_idx, chain_id, hash)
+                            select :game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash
+                            where exists (select 1 from daily_reward where reward_hash_id = :reward_hash_id)
                             `,
-                            // values (:game_id, :quest_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
+                            // values (:game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
                             params: {
                                 game_id: game_id,
-                                quest_id: quest_id,
+                                reward_hash_id: reward_hash_id,
                                 token_id: rngToken,
                                 reward_status: REWARD_STATUS.DETECTED_ON_CHAIN,
                                 reward_account: reward,
@@ -352,7 +352,7 @@ export class TezosPoller {
         // special exclusion for daily rewards. Do not payout again
         const aryPending = this.db.prepare(`
         select 
-            id,ir.game_id,quest_id,token_id,reward_status,reward_account,filter_id,time_stamp,block_level,operation_idx,chain_id,hash,reward_hash,reward_block_level,reward_block_timestamp,
+            id,ir.game_id,reward_hash_id,token_id,reward_status,reward_account,filter_id,time_stamp,block_level,operation_idx,chain_id,hash,reward_hash,reward_block_level,reward_block_timestamp,
             game_name,game_desc,tezos_contract_fa2,tezos_signer
         from indexer_reward ir
         join game g on ir.game_id = g.game_id

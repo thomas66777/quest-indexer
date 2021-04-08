@@ -87,15 +87,15 @@ router.get('/daily_reward/:game_id?/:pkh?', (req: Request, res: Response) => {
         const pkh = <string>req.query.pkh || req.params.pkh || ''
         assert(game_id, 'missing required paramaters')
 
-        const quest_id = pkh ? Number(getQuestId(game_id, pkh)) : 0
+        const reward_hash_id = pkh ? Number(getQuestId(game_id, pkh)) : 0
 
         const db: Database = req.app.get('db')
         const result = db.prepare(`
         select * 
         from daily_reward 
-        where game_id = :game_id and (quest_id = :quest_id or :quest_id=0)
+        where game_id = :game_id and (reward_hash_id = :reward_hash_id or :reward_hash_id=0)
         order by reward, block_level desc
-        `).all({ quest_id, game_id })
+        `).all({ reward_hash_id, game_id })
         result.forEach(r => r.meta = JSON.parse(r.meta))
 
         res.status(200).json(jsend.success(result))
@@ -109,15 +109,15 @@ router.get('/claim_reward/:game_id?/:pkh?', (req: Request, res: Response) => {
         const pkh = <string>req.query.pkh || req.params.pkh || ''
         assert(game_id, 'missing required paramaters')
 
-        const quest_id = pkh ? Number(getQuestId(game_id, pkh)) : 0
+        const reward_hash_id = pkh ? Number(getQuestId(game_id, pkh)) : 0
 
         const db: Database = req.app.get('db')
         const result = db.prepare(`
         select * 
         from claim_reward 
-        where game_id = :game_id and (quest_id = :quest_id or :quest_id=0)
+        where game_id = :game_id and (reward_hash_id = :reward_hash_id or :reward_hash_id=0)
         order by reward, block_level desc
-        `).all({ quest_id, game_id })
+        `).all({ reward_hash_id, game_id })
         result.forEach(r => r.meta = JSON.parse(r.meta))
 
         res.status(200).json(jsend.success(result))
@@ -130,7 +130,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
         const game_id = <string>req.query.game_id || req.params.game_id
         const pkh = <string>req.query.pkh || req.params.pkh || ''
         assert(game_id, 'missing required paramaters')
-        const quest_id = Number(getQuestId(game_id, pkh))
+        const reward_hash_id = Number(getQuestId(game_id, pkh))
 
         const db: Database = req.app.get('db')
 
@@ -139,19 +139,19 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
             select COALESCE(rs.status_description,'NOT_STARTED') as status, ir.reward_status,
             fil.filter_id, fil.game_id, fil.name, fil.description, fil.reward, fil.criteria,
             fil.time_start, fil.time_end,
-            ir.quest_id, ir.token_id, ir.reward_account,
+            ir.reward_hash_id, ir.token_id, ir.reward_account,
             ir.time_stamp as quest_completed_timestamp, ir.block_level, ir.operation_idx, ir.chain_id, ir.hash,
             ir.reward_hash, ir.reward_block_level, ir.reward_block_timestamp
             from (
                 select * from operation_filter where game_id = :game_id
             ) fil
             left join (
-                select * from indexer_reward where game_id = :game_id and quest_id = :quest_id
+                select * from indexer_reward where game_id = :game_id and reward_hash_id = :reward_hash_id
             ) ir on ir.filter_id = fil.filter_id and ir.game_id = fil.game_id
             left join reward_status rs on rs.status_id = ir.reward_status
             order by COALESCE(reward_status,0) desc, ir.block_level desc, fil.name
             `)
-            .all({ game_id, quest_id })
+            .all({ game_id, reward_hash_id })
 
         const resultsMapped = results.map(r => {
             return {
@@ -173,7 +173,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
 router.get('/history/:game_id?', (req: Request, res: Response) => {
     try {
         const game_id = req.query.game_id || req.params.game_id
-        const quest_id = req.query.quest_id || req.params.quest_id || '%'
+        const reward_hash_id = req.query.reward_hash_id || req.params.reward_hash_id || '%'
         const reward_status = req.query.reward_status || req.params.reward_status || '%'
         assert(game_id, 'missing required paramaters')
 
@@ -184,8 +184,8 @@ router.get('/history/:game_id?', (req: Request, res: Response) => {
             select rs.status_description, ir.*
             from indexer_reward ir
             join reward_status rs on rs.status_id = ir.reward_status
-            where game_id = :game_id and quest_id like :quest_id and reward_status like :reward_status`)
-            .all({ game_id, quest_id, reward_status })
+            where game_id = :game_id and reward_hash_id like :reward_hash_id and reward_status like :reward_status`)
+            .all({ game_id, reward_hash_id, reward_status })
         res.status(200).json(jsend.success(results.sort((a, b) => {
             // -completion status
             if (b.reward_status !== a.reward_status)
@@ -311,7 +311,7 @@ router.delete('/remove_payouts/:game_id?/:pkh?', (req: Request, res: Response) =
         assert(game_id && pkh, 'missing required params')
 
         const db: Database = req.app.get('db')
-        const result = db.prepare('delete from indexer_reward where game_id = :game_id and quest_id = :quest_id').run({ game_id, quest_id: getQuestId(game_id, pkh) })
+        const result = db.prepare('delete from indexer_reward where game_id = :game_id and reward_hash_id = :reward_hash_id').run({ game_id, reward_hash_id: getQuestId(game_id, pkh) })
 
         res.status(200).json(jsend.success(result.changes))
     } catch (error) {
