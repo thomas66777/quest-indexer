@@ -8,7 +8,7 @@ INSERT INTO reward_status (status_id,status_description) VALUES (5,'ERROR');
 
 insert into admin_user (pub_key,pub_key_hash) values ('edpkvHtwEi3pNY5KdUcnbzDtLvxLzRoJRVKvKc7sHVxWqk2VAtES9G','tz1NXuEyKGjGXAEn5gSqzgwhkEqNeN5wcaLf');
 
-insert into game(game_name,game_desc,tezos_contract_fa2,tezos_signer) values ('Mystery Map', 'Tezos Puzzle', 'KT1PrNd3sy1pLAqGtft47dzG4v8KizqPJntT','tz1h9R2dPcQArNUnaxtzgMC9DSHkppHsis6V');
+insert into game(game_name,game_desc,tezos_contract_fa2,tezos_signer) values ('Mystery Map', 'Tezos Puzzle', 'KT1PrNd3sy1pLAqGtft47dzG4v8KizqPJntT','');
 insert into game(game_name,game_desc,tezos_contract_fa2,tezos_signer) values ('BCA Auction House', 'auctions', 'KT1WkhPFfhydqqPXWrYFkN9gfpgus1XXCeHy','tz1NXuEyKGjGXAEn5gSqzgwhkEqNeN5wcaLf');
 insert into game(game_name,game_desc,tezos_contract_fa2,tezos_signer) values ('Mystery Map Test','Mystery Map Test','KT1RUSCZ7pJ3WNTuXFD44UpStmNRjA459guZ','tz1h9R2dPcQArNUnaxtzgMC9DSHkppHsis6V');
 
