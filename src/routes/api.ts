@@ -137,7 +137,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
         const results = db
             .prepare(`
             select COALESCE(rs.status_description,'NOT_STARTED') as status, ir.reward_status,
-            fil.filter_id, fil.game_id, fil.name, fil.description, fil.reward, fil.criteria,
+            fil.quest_id, fil.game_id, fil.name, fil.description, fil.reward, fil.criteria,
             fil.time_start, fil.time_end,
             ir.reward_hash_id, ir.token_id, ir.reward_account,
             ir.time_stamp as quest_completed_timestamp, ir.block_level, ir.operation_idx, ir.chain_id, ir.hash,
@@ -147,7 +147,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
             ) fil
             left join (
                 select * from indexer_reward where game_id = :game_id and reward_hash_id = :reward_hash_id
-            ) ir on ir.filter_id = fil.filter_id and ir.game_id = fil.game_id
+            ) ir on ir.quest_id = fil.quest_id and ir.game_id = fil.game_id
             left join reward_status rs on rs.status_id = ir.reward_status
             order by COALESCE(reward_status,0) desc, ir.block_level desc, fil.name
             `)
@@ -277,7 +277,7 @@ router.post('/operation_filter/add', (req: Request, res: Response) => {
 
         const resDb = db.prepare(sql).run({ game_id, name, description, reward, criteria: JSON.stringify(criteriaAsJson) })
 
-        res.status(200).json(jsend.success({ filter_id: resDb.lastInsertRowid }))
+        res.status(200).json(jsend.success({ quest_id: resDb.lastInsertRowid }))
     } catch (error) {
         res.status(400).json(jsend.error(error))
 
@@ -285,18 +285,18 @@ router.post('/operation_filter/add', (req: Request, res: Response) => {
 })
 router.post('/set_filter_dates', (req: Request, res: Response) => {
     try {
-        const filter_id = req.body.filter_id
+        const quest_id = req.body.quest_id
         const timeStart = req.body.time_start
         const timeEnd = req.body.time_end
 
-        assert(filter_id, 'missing required params')
+        assert(quest_id, 'missing required params')
         const time_start = timeStart ? new Date(timeStart).toISOString() : null
         const time_end = timeEnd ? new Date(timeEnd).toISOString() : null
 
         const db: Database = req.app.get('db')
         const result = db
-            .prepare('update operation_filter set time_start = :time_start, time_end = :time_end where filter_id = :filter_id')
-            .run({ filter_id, time_start, time_end })
+            .prepare('update operation_filter set time_start = :time_start, time_end = :time_end where quest_id = :quest_id')
+            .run({ quest_id, time_start, time_end })
 
         res.status(200).json(jsend.success(result.changes))
     } catch (error) {

@@ -140,7 +140,7 @@ export class TezosPoller {
                 const batchTrxs: ITransactionBatch[] = []
                 // Load the filters
                 const filtersOperation = this.db.prepare(`
-                select game_id, filter_id, name, reward, criteria
+                select game_id, quest_id, name, reward, criteria
                 from operation_filter
                 where (datetime(:block_time, 'unixepoch') >= datetime(time_start) or time_start is null)
                 and   (datetime(:block_time, 'unixepoch') <= datetime(time_end) or time_end is null)
@@ -159,7 +159,7 @@ export class TezosPoller {
                         'operations:contents:destination': contractFA2,
                     }
                     filtersDailyReward.push({
-                        filter_id: contractFA2,
+                        quest_id: contractFA2,
                         game_id,
                         filter_type: 'DAILY',
                         name: 'daily reward',
@@ -170,7 +170,7 @@ export class TezosPoller {
                         }
                     })
                     filtersClaimReward.push({
-                        filter_id: contractFA2,
+                        quest_id: contractFA2,
                         game_id,
                         filter_type: 'CLAIM',
                         name: 'claim reward',
@@ -208,7 +208,7 @@ export class TezosPoller {
                     } else if (filters[j].filter_type == 'DAILY') {
                         console.log('reward daily', reward, filters[j].name)
                         const reward_hash_id = getQuestId(game_id, reward)
-                        const contractFA2 = this.mapContracts.get(filters[j].filter_id)
+                        const contractFA2 = this.mapContracts.get(filters[j].quest_id)
                         const meta = getLedgerMeta(contractFA2, operation)
                         const token_id = meta.find(m => m.address == reward)?.token_id || getTokenDailyReward({ operations: operation })
                         batchTrxs.push({
@@ -233,7 +233,7 @@ export class TezosPoller {
                     } else if (filters[j].filter_type == 'CLAIM') {
                         console.log('reward claim', reward, filters[j].name)
                         const reward_hash_id = getQuestId(game_id, reward)
-                        const contractFA2 = this.mapContracts.get(filters[j].filter_id)
+                        const contractFA2 = this.mapContracts.get(filters[j].quest_id)
                         const meta = getLedgerMeta(contractFA2, operation)
                         batchTrxs.push({
                             sql: `
@@ -262,21 +262,21 @@ export class TezosPoller {
                             console.error(new Date().toISOString(), `cannot reward game_id: ${game_id} ${operation.hash} as no tokens are configured`)
                             continue
                         }
-                        // Can only have one game_id and filter_id combination
+                        // Can only have one game_id and quest_id combination
                         batchTrxs.push({
                             sql: `
-                            insert or ignore into indexer_reward (game_id, reward_hash_id, token_id, reward_status, reward_account, filter_id, time_stamp, block_level, operation_idx, chain_id, hash)
-                            select :game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash
+                            insert or ignore into indexer_reward (game_id, reward_hash_id, token_id, reward_status, reward_account, quest_id, time_stamp, block_level, operation_idx, chain_id, hash)
+                            select :game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :quest_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash
                             where exists (select 1 from daily_reward where reward_hash_id = :reward_hash_id)
                             `,
-                            // values (:game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :filter_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
+                            // values (:game_id, :reward_hash_id, :token_id, :reward_status, :reward_account, :quest_id, :time_stamp, :block_level, :operation_idx, :chain_id, :hash)
                             params: {
                                 game_id: game_id,
                                 reward_hash_id: reward_hash_id,
                                 token_id: rngToken,
                                 reward_status: REWARD_STATUS.DETECTED_ON_CHAIN,
                                 reward_account: reward,
-                                filter_id: filters[j].filter_id,
+                                quest_id: filters[j].quest_id,
                                 time_stamp: block.header.timestamp,
                                 block_level: block.header.level,
                                 operation_idx: i,
@@ -352,7 +352,7 @@ export class TezosPoller {
         // special exclusion for daily rewards. Do not payout again
         const aryPending = this.db.prepare(`
         select 
-            id,ir.game_id,reward_hash_id,token_id,reward_status,reward_account,filter_id,time_stamp,block_level,operation_idx,chain_id,hash,reward_hash,reward_block_level,reward_block_timestamp,
+            id,ir.game_id,reward_hash_id,token_id,reward_status,reward_account,quest_id,time_stamp,block_level,operation_idx,chain_id,hash,reward_hash,reward_block_level,reward_block_timestamp,
             game_name,game_desc,tezos_contract_fa2,tezos_signer
         from indexer_reward ir
         join game g on ir.game_id = g.game_id
@@ -366,7 +366,7 @@ export class TezosPoller {
                     sql: 'update indexer_reward set reward_status = :reward_status where id = :id',
                     params: { reward_status: REWARD_STATUS.AWAITING_ADMIN_TRANSFER, id: pending.id }
                 })
-                console.log(`FA2 reward now awaits Admin transfer for: ${pending.reward_account} token_id: ${pending.token_id} game_id: ${pending.game_id} filter_id: ${pending.filter_id}`)
+                console.log(`FA2 reward now awaits Admin transfer for: ${pending.reward_account} token_id: ${pending.token_id} game_id: ${pending.game_id} quest_id: ${pending.quest_id}`)
             }
         }
 

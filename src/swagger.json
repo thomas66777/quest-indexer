@@ -317,7 +317,7 @@
                                             {
                                                 "status": "NOT_STARTED",
                                                 "reward_status": null,
-                                                "filter_id": 8,
+                                                "quest_id": 8,
                                                 "game_id": 1,
                                                 "name": "contrct-to-dauth",
                                                 "description": "Send an FA2 token in a defined contract X to a Twitter (DirectAuth) user",
@@ -349,7 +349,7 @@
                                             {
                                                 "status": "NOT_STARTED",
                                                 "reward_status": null,
-                                                "filter_id": 4,
+                                                "quest_id": 4,
                                                 "game_id": 1,
                                                 "name": "from-dirauth",
                                                 "description": "Use Kukai to send tez from a DirectAuth account to any recipient",
@@ -587,7 +587,7 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "filter_id": {
+                                    "quest_id": {
                                         "type": "number",
                                         "example": "12"
                                     },
@@ -601,7 +601,7 @@
                                     }
                                 },
                                 "required": [
-                                    "filter_id"
+                                    "quest_id"
                                 ]
                             }
                         }

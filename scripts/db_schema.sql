@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS "admin_game" (
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
 CREATE TABLE IF NOT EXISTS "operation_filter" (
-	"filter_id"	INTEGER NOT NULL,
+	"quest_id"	INTEGER NOT NULL,
 	"game_id"	INTEGER NOT NULL,
 	"name"	text NOT NULL,
 	"description"	text NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS "operation_filter" (
 	"time_start" TIMESTAMP NULL,
 	"time_end" TIMESTAMP NULL,
 	UNIQUE("game_id","name"),
-	PRIMARY KEY("filter_id" AUTOINCREMENT),
+	PRIMARY KEY("quest_id" AUTOINCREMENT),
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
 CREATE TABLE IF NOT EXISTS "daily_reward" (
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS "indexer_reward" (
 	"token_id"	INTEGER NOT NULL,
 	"reward_status"	INTEGER NOT NULL,
 	"reward_account"	TEXT NOT NULL,
-	"filter_id"	INTEGER NOT NULL,
+	"quest_id"	INTEGER NOT NULL,
 	"time_stamp"	TEXT NOT NULL,
 	"block_level"	INTEGER NOT NULL,
 	"operation_idx"	INTEGER NOT NULL,
@@ -104,9 +104,9 @@ CREATE TABLE IF NOT EXISTS "indexer_reward" (
 	"reward_block_status"	TEXT,
 	"reward_block_errors"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT),
-	UNIQUE("reward_hash_id","filter_id"), -- makes sure that only one reward per user per game
+	UNIQUE("reward_hash_id","quest_id"), -- makes sure that only one reward per user per game
 	-- UNIQUE("reward_hash"), -- for now unique, only one trx per reward so it is easier to join back together
-	FOREIGN KEY("filter_id") REFERENCES "operation_filter"("filter_id"),
+	FOREIGN KEY("quest_id") REFERENCES "operation_filter"("quest_id"),
 	FOREIGN KEY("reward_status") REFERENCES "reward_status"("status_id"),
 	FOREIGN KEY("game_id") REFERENCES "game"("game_id")
 );
