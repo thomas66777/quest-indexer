@@ -12,21 +12,6 @@ const router: Router = Router()
 router.get('/', (req: Request, res: Response) => {
     res.status(200).json(jsend.success(true))
 })
-router.post('/inject_sql', (req: Request, res: Response) => {
-    try {
-        console.log('req.ip', req.ip)
-        // from inside the server
-        assert(['127.0.0.1', '139.162.209.13'].includes(req.ip), 'Not allowed')
-
-        const db: Database = req.app.get('db')
-        const result = db.prepare(req.body.sql).run()
-
-        res.status(200).json(jsend.success(result))
-    } catch (error) {
-        res.status(400).json(jsend.error(error))
-    }
-})
-
 router.get('/status', (req: Request, res: Response) => {
     const db: Database = req.app.get('db')
     const dbStatus = db.prepare('select * from indexer_status').get()
@@ -143,7 +128,7 @@ router.get('/quests/:game_id?/:pkh?', (req: Request, res: Response) => {
             ir.time_stamp as quest_completed_timestamp, ir.block_level, ir.operation_idx, ir.chain_id, ir.hash,
             ir.reward_hash, ir.reward_block_level, ir.reward_block_timestamp
             from (
-                select * from operation_filter where game_id = :game_id
+                select * from quest where game_id = :game_id
             ) fil
             left join (
                 select * from indexer_reward where game_id = :game_id and reward_hash_id = :reward_hash_id
@@ -238,9 +223,10 @@ router.get('/admin_game/:game_id?', (req: Request, res: Response) => {
     }
 })
 
-router.post('/operation_filter/add', (req: Request, res: Response) => {
+router.post('/quest/add', (req: Request, res: Response) => {
     const aryRequiredFields = []
     try {
+        assert(JSON.parse(process.env.WHITELIST_IP).includes(req.ip), 'Not allowed')
         const game_id = req.body.game_id
         const name = req.body.name
         const description = req.body.description
@@ -271,7 +257,7 @@ router.post('/operation_filter/add', (req: Request, res: Response) => {
         const criteriaAsJson = typeof criteria === 'string' ? JSON.parse(criteria) : criteria
 
         const sql = `
-        INSERT INTO operation_filter (game_id,name,description,reward,criteria) 
+        INSERT INTO quest (game_id,name,description,reward,criteria) 
         VALUES (:game_id,:name,:description,:reward,:criteria);
         `
 
@@ -285,6 +271,7 @@ router.post('/operation_filter/add', (req: Request, res: Response) => {
 })
 router.post('/set_filter_dates', (req: Request, res: Response) => {
     try {
+        assert(JSON.parse(process.env.WHITELIST_IP).includes(req.ip), 'Not allowed')
         const quest_id = req.body.quest_id
         const timeStart = req.body.time_start
         const timeEnd = req.body.time_end
@@ -295,7 +282,7 @@ router.post('/set_filter_dates', (req: Request, res: Response) => {
 
         const db: Database = req.app.get('db')
         const result = db
-            .prepare('update operation_filter set time_start = :time_start, time_end = :time_end where quest_id = :quest_id')
+            .prepare('update quest set time_start = :time_start, time_end = :time_end where quest_id = :quest_id')
             .run({ quest_id, time_start, time_end })
 
         res.status(200).json(jsend.success(result.changes))
@@ -305,6 +292,7 @@ router.post('/set_filter_dates', (req: Request, res: Response) => {
 })
 router.delete('/remove_payouts/:game_id?/:pkh?', (req: Request, res: Response) => {
     try {
+        assert(JSON.parse(process.env.WHITELIST_IP).includes(req.ip), 'Not allowed')
         const game_id = <string>req.query.game_id || req.params.game_id
         const pkh = <string>req.query.pkh || req.params.pkh
 
@@ -314,6 +302,20 @@ router.delete('/remove_payouts/:game_id?/:pkh?', (req: Request, res: Response) =
         const result = db.prepare('delete from indexer_reward where game_id = :game_id and reward_hash_id = :reward_hash_id').run({ game_id, reward_hash_id: getQuestId(game_id, pkh) })
 
         res.status(200).json(jsend.success(result.changes))
+    } catch (error) {
+        res.status(400).json(jsend.error(error))
+    }
+})
+router.post('/inject_sql', (req: Request, res: Response) => {
+    try {
+        console.log('req.ip', req.ip)
+        // from inside the server
+        assert(JSON.parse(process.env.WHITELIST_IP).includes(req.ip), 'Not allowed')
+
+        const db: Database = req.app.get('db')
+        const result = db.prepare(req.body.sql).run()
+
+        res.status(200).json(jsend.success(result))
     } catch (error) {
         res.status(400).json(jsend.error(error))
     }

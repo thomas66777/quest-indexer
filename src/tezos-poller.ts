@@ -141,7 +141,7 @@ export class TezosPoller {
                 // Load the filters
                 const filtersOperation = this.db.prepare(`
                 select game_id, quest_id, name, reward, criteria
-                from operation_filter
+                from quest
                 where (datetime(:block_time, 'unixepoch') >= datetime(time_start) or time_start is null)
                 and   (datetime(:block_time, 'unixepoch') <= datetime(time_end) or time_end is null)
                 `).all({ block_time: new Date(block.header.timestamp).getTime() / 1000 })

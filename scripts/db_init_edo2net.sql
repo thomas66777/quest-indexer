@@ -24,7 +24,7 @@ insert or ignore into game_tokens values
 	(3,11),(3,12),(3,13),(3,14),(3,15),(3,16),(3,17),(3,18),(3,19),(3,20),
 	(3,21),(3,22),(3,23),(3,24);
 
-INSERT or ignore INTO operation_filter (game_id,name,description,reward,criteria) VALUES
+INSERT or ignore INTO quest (game_id,name,description,reward,criteria) VALUES
 	 (2,'auction','','SPECIAL:auction','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:destination":"KT1WkhPFfhydqqPXWrYFkN9gfpgus1XXCeHy","operations:contents:kind":"transaction","operations:contents:parameters:entrypoint":"resolve"}'),
      (1,'transfer','transfer over 1 XTZ','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:amount":{"eval":"value >= 1000000"}}'),
 	 (1,'to-dirauth','Use Kukai wallet to send >= x amount of tez to a DirectAuth Kukai account','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:destination":{"eval":"value.substr(0,3) == \"tz2\""},"operations:contents:amount":{"eval":"value >= 1000000"}}'),
@@ -35,7 +35,7 @@ INSERT or ignore INTO operation_filter (game_id,name,description,reward,criteria
 	 (1,'contrct-to-dauth','Send an FA2 token in a defined contract X to a Twitter (DirectAuth) user','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:source":{"eval":"value.substr(0,3) == \"tz2\""},"operations:contents:destination":"<KT1...>","operations:contents:parameters:entrypoint":"transfer"}');
 
 
-INSERT or ignore INTO operation_filter (game_id,name,description,reward,criteria) VALUES
+INSERT or ignore INTO quest (game_id,name,description,reward,criteria) VALUES
      (3,'transfer','transfer over 1 XTZ','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:amount":{"eval":"value >= 1000000"}}'),
 	 (3,'to-dirauth','Use Kukai wallet to send >= x amount of tez to a DirectAuth Kukai account','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:destination":{"eval":"value.substr(0,3) == \"tz2\""},"operations:contents:amount":{"eval":"value >= 1000000"}}'),
 	 (3,'from-dirauth','Use Kukai to send tez from a DirectAuth account to any recipient','operations:contents:0:source','{"operations:chain_id":"NetXSgo1ZT2DRUG","operations:contents:kind":"transaction","operations:contents:source":{"eval":"value.substr(0,3) == \"tz2\""},"operations:contents:amount":{"eval":"value >= 1000000"}}'),

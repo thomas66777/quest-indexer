@@ -24,10 +24,10 @@ insert or ignore into game_tokens values
 	(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,10),
 	(3,11),(3,12),(3,13),(3,14),(3,15),(3,16),(3,17),(3,18),(3,19),(3,20);
 
--- INSERT INTO operation_filter (game_id,name,description,reward,criteria) 
+-- INSERT INTO quest (game_id,name,description,reward,criteria) 
 -- VALUES (2,'auction','','SPECIAL:auction','{"operations:chain_id":"NetXdQprcVkpaWU","operations:contents:destination":"KT1HvpCCHvC9c4iNzAa6rx4MqNsmPRJf6CEw","operations:contents:kind":"transaction","operations:contents:parameters:entrypoint":"resolve"}');
 
-INSERT or ignore INTO operation_filter (game_id,name,description,reward,criteria) VALUES
+INSERT or ignore INTO quest (game_id,name,description,reward,criteria) VALUES
 	 (2,'auction','','SPECIAL:auction','{"operations:chain_id":"NetXm8tYqnMWky1","operations:contents:destination":"KT1ExCAaYfdoiY1S5AJ2Y8Y2PBv8KFTM53yr","operations:contents:kind":"transaction","operations:contents:parameters:entrypoint":"resolve"}'),
      (1,'transfer','transfer over 1 XTZ','operations:contents:0:source','{"operations:chain_id":"NetXm8tYqnMWky1","operations:contents:kind":"transaction","operations:contents:amount":{"eval":"value >= 1000000"}}'),
 	 (1,'to-dirauth','Use Kukai wallet to send >= x amount of tez to a DirectAuth Kukai account','operations:contents:0:source','{"operations:chain_id":"NetXm8tYqnMWky1","operations:contents:kind":"transaction","operations:contents:destination":{"eval":"value.substr(0,3) == \"tz2\""},"operations:contents:amount":{"eval":"value >= 1000000"}}'),
